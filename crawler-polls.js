@@ -81,8 +81,11 @@
 	function requestTopic() {
 		if (topics.length) {
 			var topic = topics.pop();
-			getTopicById(topic.topicid);
+			setTimeout(function () {
+				getTopicById(topic.topicid);
+			}, 500);
 		} else {
+			console.log("Shutting down...");
 			setTimeout(function () {
 				shutdown();
 			}, 30000);
