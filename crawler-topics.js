@@ -59,7 +59,6 @@
 			}
 		});
 	}
-	}
 
 	function insertTopic(topic) {
 		var collection = DB.collection("topics");
