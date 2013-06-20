@@ -49,7 +49,7 @@
 							(!maxIndex && currentIndex > 200) ) {
 						console.log("Shutting down");
 						clearInterval(interval);
-						setTimeout(shutdown, 10000);
+						setTimeout(shutdown, 60000);
 					} else {
 						console.log("Retrieving topics at index: " + currentIndex +
 								"/" + maxIndex);

@@ -2,3 +2,4 @@
 *.swp
 backup/*
 logs/*
+node_modules/*

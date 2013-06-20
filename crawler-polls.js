@@ -34,7 +34,7 @@
 				shutdown();
 			} else {
 				DB = db;
-				DB.collection("topics").find().toArray(function (err, items) {
+				DB.collection("topics").find({polls: {$exists:false}}).toArray(function (err, items) {
 					topics = items;
 					messageHandler("topicsRetrieved");
 				});
@@ -46,12 +46,13 @@
 		switch (name) {
 		case "topicContentRetrieved":
 			parseTopic(message.window.$, message.topicid);
+			requestTopic();
 			break;
 		case "topicParsed":
 			updateTopic(message.topicid, message.polls, message.votes);
 			break;
 		case "topicsRetrieved":
-			requestLoop();
+			requestTopic();
 			break;
 		}
 	}
@@ -77,22 +78,15 @@
 		});
 	}
 
-	function requestLoop() {
-		var interval = setInterval(function () {
-			if (topics.length) {
-				var topic = topics.pop();
-				getTopicById(topic.topicid);
-
-				if (topics.length % 50 === 0) {
-					console.log(topics.length + " remaining...");
-				}
-			} else {
-				clearInterval(interval);
-				setTimeout(function () {
-					shutdown();
-				}, 10000);
-			}
-		}, 750);
+	function requestTopic() {
+		if (topics.length) {
+			var topic = topics.pop();
+			getTopicById(topic.topicid);
+		} else {
+			setTimeout(function () {
+				shutdown();
+			}, 30000);
+		}
 	}
 
 	function shutdown() {
@@ -110,7 +104,7 @@
 			if (err) {
 				console.dir(err);
 			} else {
-				console.log("Updated topic: " + topicid + " (" + votes + " votes)", polls);
+				console.log("(" + topics.length + ") Updated topic: " + topicid + " (" + votes + " votes)", polls);
 			}
 		});
 	}
