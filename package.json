@@ -3,7 +3,10 @@
 	"version": "1.0.0",
 	"description": "A website for deciding what is crap and what is not crap.",
 	"main": "app.js",
-	"repository": "",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/cgravolet/crapnotcrap.git"
+	},
 	"author": "Charles Gravolet",
 	"license": "BSD",
 	"devDependencies": {
