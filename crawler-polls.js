@@ -83,7 +83,7 @@
 			var topic = topics.pop();
 			setTimeout(function () {
 				getTopicById(topic.topicid);
-			}, 500);
+			}, 750);
 		} else {
 			console.log("Shutting down...");
 			setTimeout(function () {
