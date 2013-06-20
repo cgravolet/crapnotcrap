@@ -1,14 +1,15 @@
 (function () {
 	"use strict";
 
-	var _CNCURL, _DBURL, DB, jsdom, maxIndex, mongo, request;
+	var _CNCURL, _DBURL, _DB, curIndex, jsdom, maxIndex, mongo, request;
 
-	_CNCURL = "http://www.electricalaudio.com/phpBB3/viewforum.php?f=6&start=";
-	_DBURL  = "mongodb://localhost:27017/crapnotcrap";
-	DB      = null;
-	jsdom   = require("jsdom");
-	mongo   = require("mongodb").MongoClient;
-	request = require("request");
+	_CNCURL  = "http://www.electricalaudio.com/phpBB3/viewforum.php?f=6&start=";
+	_DBURL   = "mongodb://localhost:27017/crapnotcrap";
+	curIndex = 0;
+	_DB      = null;
+	jsdom    = require("jsdom");
+	mongo    = require("mongodb").MongoClient;
+	request  = require("request");
 
 	function getMaxIndex($) {
 		var max = $(".pagination span a:last").attr("href");
@@ -22,6 +23,7 @@
 	function getTopicListAtIndex(index) {
 		request(_CNCURL + index, function (err, res, body) {
 			if (!err && res.statusCode === 200) {
+				messageHandler("topicListRetrieved");
 				jsdom.env(body, ["http://code.jquery.com/jquery.js"], parseTopicList);
 			} else if (err) {
 				console.dir(err);
@@ -31,37 +33,18 @@
 
 	function initialize() {
 		mongo.connect(_DBURL, function (err, db) {
-			var currentIndex, interval;
-
 			if (err) {
 				console.dir(err);
 				shutdown();
 			} else {
-				DB = db;
-				currentIndex = 0;
-
-				getTopicListAtIndex(currentIndex);
-
-				interval = setInterval(function () {
-					currentIndex += 50;
-
-					if ( (maxIndex && currentIndex > maxIndex) ||
-							(!maxIndex && currentIndex > 200) ) {
-						console.log("Shutting down");
-						clearInterval(interval);
-						setTimeout(shutdown, 60000);
-					} else {
-						console.log("Retrieving topics at index: " + currentIndex +
-								"/" + maxIndex);
-						getTopicListAtIndex(currentIndex);
-					}
-				}, 3000);
+				_DB = db;
+				messageHandler("dbConnectionEstablished");
 			}
 		});
 	}
 
 	function insertTopic(topic) {
-		var collection = DB.collection("topics");
+		var collection = _DB.collection("topics");
 
 		collection.insert(topic, {w:1}, function (err, result) {
 			if (err) {
@@ -70,6 +53,15 @@
 				console.log("Inserted topic: " + topic.topicid + " " + topic.title);
 			}
 		});
+	}
+
+	function messageHandler(name, message) {
+		switch (name) {
+			case "dbConnectionEstablished": // intentional fall-through
+			case "topicListParsed":
+				requestTopicList();
+				break;
+		}
 	}
 
 	function parseTopic($) {
@@ -94,11 +86,27 @@
 			if (!maxIndex) {
 				getMaxIndex(window.$);
 			}
+			messageHandler("topicListParsed");
 			window.$(".topics .row").not(".sticky, .announce").each(function () {
 				parseTopic.call(this, window.$);
 			});
 		} else {
 			console.dir(err);
+		}
+	}
+
+	function requestTopicList() {
+		if ( (maxIndex && curIndex > maxIndex) ||
+				(!maxIndex && curIndex > 200) ) {
+			console.log("Shutting down...");
+			setTimeout(shutdown, 30000);
+		} else {
+			console.log("Retrieving topics at index: " + curIndex +
+					"/" + maxIndex);
+			setTimeout(function () {
+				getTopicListAtIndex(curIndex);
+				curIndex += 50;
+			}, 750);
 		}
 	}
 
@@ -108,7 +116,7 @@
 	}
 
 	function updateTopic(topic) {
-		var collection = DB.collection("topics");
+		var collection = _DB.collection("topics");
 
 		collection.update({topicid: topic.topicid}, {$set: {
 			replies: topic.replies,
