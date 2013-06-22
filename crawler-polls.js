@@ -1,133 +1,132 @@
-(function () {
-	"use strict";
+var _CNCURL, _DBURL, DB, jsdom, mongo, request, topics;
 
-	var _CNCURL, _DBURL, DB, jsdom, maxIndex, mongo, request, topics;
+_CNCURL = "http://www.electricalaudio.com/phpBB3/viewtopic.php?f=6&view=viewpoll&t=";
+_DBURL  = "mongodb://localhost:27017/crapnotcrap";
+DB      = null;
+jsdom   = require("jsdom");
+mongo   = require("mongodb").MongoClient;
+request = require("request");
 
-	_CNCURL = "http://www.electricalaudio.com/phpBB3/viewtopic.php?f=6&view=viewpoll&t=";
-	_DBURL  = "mongodb://localhost:27017/crapnotcrap";
-	DB      = null;
-	jsdom   = require("jsdom");
-	mongo   = require("mongodb").MongoClient;
-	request = require("request");
-
-	function getTopicById(topicid) {
-		console.log(topicid + " Retrieving topic...");
-		request(_CNCURL + topicid, function (err, res, body) {
-			if (!err && res.statusCode === 200) {
-				jsdom.env(body, ["./public_html/js/lib/jquery-1.10.1.js"], function (err, window) {
-					if (err) {
-						console.dir(err);
-					} else {
-						messageHandler("topicContentRetrieved", {
-							topicid: topicid,
-							window: window
-						});
-					}
-				});
-			} else if (err) {
-				console.dir(err);
-			}
-		});
-	}
-
-	function initialize() {
-		mongo.connect(_DBURL, function (err, db) {
-			if (err) {
-				console.dir(err);
-				shutdown();
-			} else {
-				DB = db;
-				messageHandler("dbConnectionOpened");
-				DB.collection("topics").find({polls: {$exists:false}}).toArray(function (err, items) {
-					topics = items;
-					messageHandler("topicsRetrieved");
-				});
-			}
-		});
-	}
-
-	function messageHandler(name, message) {
-		switch (name) {
-		case "topicContentRetrieved":
-			console.log(message.topicid + " " + name);
-			parseTopic(message.window.$, message.topicid);
-			requestTopic();
-			break;
-		case "topicParsed":
-			console.log(message.topicid + " " + name);
-			updateTopic(message.topicid, message.polls, message.votes);
-			break;
-		case "topicsRetrieved":
-			console.log(name);
-			requestTopic();
-			break;
-		case "topicUpdated":
-			console.log(message.topicid + " " + name + " | " + message.votes +
-					" votes | " + JSON.stringify(message.polls));
-			console.log(topics.length + " topics remain...");
-			console.log("----------");
-			break;
+function getTopicById(topicid) {
+	console.log(topicid + " Retrieving topic " + topics.length + "...");
+	request(_CNCURL + topicid, function (err, res, body) {
+		if (!err && res.statusCode === 200) {
+			jsdom.env(body, ["./public_html/js/lib/jquery-1.10.1.js"], function (err, window) {
+				if (err) {
+					console.dir(err);
+				} else {
+					messageHandler("topicContentRetrieved", {
+						topicid: topicid,
+						window:  window
+					});
+				}
+			});
+		} else if (err) {
+			console.dir(err);
 		}
-	}
+	});
+}
 
-	function parseTopic($, topicid) {
-		var polls, result, votes;
-
-		polls = [];
-		votes = 0;
-
-		$(".polls .resultbar div").each(function () {
-			result = parseFloat($(this).text());
-			votes += result;
-			polls.push({
-				label: $(this).parent().parent().find("dt").text().trim(),
-				votes: result
-			})
-		});
-		messageHandler("topicParsed", {
-			polls: polls,
-			topicid: topicid,
-			votes: votes
-		});
-	}
-
-	function requestTopic() {
-		if (topics.length) {
-			var topic = topics.pop();
-			setTimeout(function () {
-				getTopicById(topic.topicid);
-			}, 750);
-		} else {
+function initialize() {
+	mongo.connect(_DBURL, function (err, db) {
+		if (err) {
+			console.dir(err);
 			shutdown();
+		} else {
+			DB = db;
+			messageHandler("dbConnectionOpened");
+			DB.collection("topics").find({polls: {$exists:false}},
+					{topicid: 1, _id: 0}).toArray(function (err, items) {
+				topics = items;
+				messageHandler("topicsRetrieved");
+			});
 		}
+	});
+}
+
+function messageHandler(name, message) {
+	switch (name) {
+	case "topicContentRetrieved":
+		console.log(message.topicid + " " + name);
+		parseTopic(message.window, message.topicid);
+		break;
+	case "topicParsed":
+		console.log(message.topicid + " " + name);
+		updateTopic(message.topicid, message.polls, message.votes);
+		break;
+	case "topicsRetrieved":
+		console.log(name);
+		requestTopic();
+		break;
+	case "topicUpdated":
+		console.log(message.topicid + " " + name + " | " + message.votes +
+				" votes | " + JSON.stringify(message.polls));
+		console.log("----------");
+		requestTopic();
+		break;
 	}
+}
 
-	function shutdown() {
-		console.log("Shutting down...");
-		setTimeout(function () {
-			console.log("End of program");
-			process.exit();
-		}, 30000);
+function parseTopic(window, topicid) {
+	var $, polls, result, votes;
+
+	$     = window.$;
+	polls = [];
+	votes = 0;
+
+	$(".polls .resultbar div").each(function () {
+		result = parseFloat($(this).text());
+		votes += result;
+		polls.push({
+			label: $(this).parent().parent().find("dt").text().trim(),
+			votes: result
+		})
+	});
+
+	messageHandler("topicParsed", {
+		polls:   polls,
+		topicid: topicid,
+		votes:   votes
+	});
+
+	polls = null;
+	window.close();
+}
+
+function requestTopic() {
+	if (topics.length) {
+		getTopicById(topics.pop().topicid);
+	} else {
+		shutdown();
 	}
+}
 
-	function updateTopic(topicid, polls, votes) {
-		var collection = DB.collection("topics");
+function shutdown() {
+	console.log("Shutting down...");
+	setTimeout(function () {
+		console.log("End of program");
+		process.exit();
+	}, 30000);
+}
 
-		DB.collection("topics").update({topicid: topicid}, {$set: {
-			polls: polls,
-			votes: votes
-		}}, {w:1}, function (err, result) {
-			if (err) {
-				console.dir(err);
-			} else {
-				messageHandler("topicUpdated", {
-					polls: polls,
-					topicid: topicid,
-					votes: votes
-				});
-			}
-		});
-	}
+function updateTopic(topicid, polls, votes) {
+	var data = {
+		polls: polls,
+		votes: votes
+	};
 
-	initialize();
-}());
+	DB.collection("topics").update({topicid: topicid}, {$set: data}, {w:1},
+			function (err, result) {
+		if (err) {
+			console.dir(err);
+		} else {
+			messageHandler("topicUpdated", {
+				polls:   polls,
+				topicid: topicid,
+				votes:   votes
+			});
+		}
+	});
+}
+
+initialize();
