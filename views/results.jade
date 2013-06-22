@@ -1,0 +1,21 @@
+extends layout
+
+block content
+	header.search-form
+		form(action='/', method='POST')
+			p
+				input.search-box(type='text', name='search', value=term)
+				button(type='submit') Cold Check It
+		
+	section.search-results
+		- each topic in topics
+			h2.topic
+				a(href='http://www.electricalaudio.com/phpBB3/viewtopic.php?f=6&view=viewpoll&t=#{topic.topicid}')= topic.title
+			ul.polls
+				- each poll in topic.polls
+					li
+						- if (poll.leading)
+							span.label.is-leading(style='width:#{poll.percentWidth}%') #{poll.label}
+						- else
+							span.label(style='width:#{poll.percentWidth}%') #{poll.label}
+						span.votes #{poll.votes} votes
