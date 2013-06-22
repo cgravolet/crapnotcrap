@@ -110,7 +110,7 @@ function shutdown() {
 	setTimeout(function () {
 		console.log("End of program");
 		process.exit();
-	}, 30000);
+	}, 10000);
 }
 
 function updateTopic(topic) {
