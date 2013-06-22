@@ -11,7 +11,7 @@ function getTopicById(topicid) {
 	console.log(topicid + " Retrieving topic " + topics.length + "...");
 	request(_CNCURL + topicid, function (err, res, body) {
 		if (!err && res.statusCode === 200) {
-			jsdom.env(body, ["./public_html/js/lib/jquery-1.10.1.js"], function (err, window) {
+			jsdom.env(body, ["./public/js/lib/jquery-1.10.1.js"], function (err, window) {
 				if (err) {
 					console.dir(err);
 				} else {
