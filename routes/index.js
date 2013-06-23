@@ -7,5 +7,6 @@ exports.index = function (req, res){
 
 exports.search = function (req, res) {
 	var term = req.body.search.replace(/[\\\(\);]+/gi, '').trim();
+	term = term.replace(/\//g, '_slash_');
 	res.redirect('/search/' + encodeURIComponent(term));
 };
