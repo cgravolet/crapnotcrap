@@ -3,10 +3,8 @@ extends layout
 block content
 	section.search-form
 		form(action='/', method='POST')
-			p.
-				Search for something, if you're lucky you may learn whether it is
-				<strong>crap</strong> or <strong>not crap</strong>
+			h1.logo= title
 			p.input-container
-				input.search-box(type='text', name='search')
+				input.search-box(type='text', name='search', placeholder='You know what to do...')
 			p.button-container
 				button(type='submit') Cold Check It

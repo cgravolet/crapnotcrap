@@ -20,6 +20,16 @@ body {
 a {
   color: #a64729;
 }
+h1.logo {
+  background: transparent url("/img/logo-x2.png") no-repeat center center;
+  background-size: 311px 50px;
+  height: 50px;
+  margin: 0;
+  text-indent: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
 .search-form {
   background: #d9d1b8;
   -webkit-border-radius: 8px;
@@ -36,10 +46,9 @@ header.search-form {
   -webkit-box-shadow: 1px 0 3px 0 #333;
   -moz-box-shadow: 1px 0 3px 0 #333;
   box-shadow: 1px 0 3px 0 #333;
-  height: 60px;
   left: 0;
   margin: 0;
-  padding: 0;
+  padding: 15px 0;
   position: fixed;
   top: 0;
   width: 100%;
@@ -51,6 +60,9 @@ header.search-form p {
 .search-form p {
   margin: 0;
 }
+.search-form .input-container {
+  margin: 20px 0;
+}
 .search-form input {
   border: 0;
   -webkit-border-radius: 2px;
@@ -59,7 +71,7 @@ header.search-form p {
   font-size: 16px;
   height: 20px;
   line-height: 20px;
-  margin: 1em 0;
+  margin: 0;
   padding: 5px 5px;
   width: 450px;
 }
@@ -87,44 +99,52 @@ button {
 }
 .search-results {
   margin: 90px auto 30px;
-  width: 960px;
+  width: 700px;
 }
 .search-results h2 {
-  font-size: 20px;
+  font-size: 18px;
+  margin-bottom: 10px;
 }
 .polls {
-  margin: 10px 0 30px;
+  margin: 10px auto 45px;
   padding: 0;
 }
 .polls li {
-  background: #d9d1b8;
   display: block;
   line-height: 25px;
   list-style: none;
-  margin: 0 0 5px;
-  padding: 0;
   position: relative;
-  width: 600px;
 }
 .polls .label {
+  background: #ccc2a3;
+  margin: 0 0 5px;
+  overflow: hidden;
+  padding: 0;
+  width: 600px;
+}
+.polls .label strong {
   background: #aa2245;
   color: #fff;
   display: block;
+  font-size: 14px;
+  font-weight: normal;
   line-height: 25px;
   white-space: nowrap;
   width: 100%;
 }
-.polls .label:before {
+.polls .label strong:before {
   content: "";
   display: inline-block;
   width: 5px;
 }
-.polls .is-leading {
+.polls .label .is-leading {
   background: #f81057;
 }
 .polls .votes {
-  left: 610px;
   position: absolute;
+  right: 0;
+  text-align: right;
   top: 0;
   white-space: nowrap;
+  width: 100px;
 }

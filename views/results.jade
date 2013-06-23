@@ -15,7 +15,7 @@ block content
 				- each poll in topic.polls
 					li
 						- if (poll.leading)
-							span.label.is-leading(style='width:#{poll.percentWidth}%') #{poll.label}
+							.label(title=poll.label) <strong style="width:#{poll.percentWidth}%" class="is-leading">#{poll.label}</strong>
 						- else
-							span.label(style='width:#{poll.percentWidth}%') #{poll.label}
-						span.votes #{poll.votes} votes
+							.label(title=poll.label) <strong style="width:#{poll.percentWidth}%">#{poll.label}</strong>
+						.votes #{poll.votes} votes

@@ -4,6 +4,7 @@
 
 var express = require('express')
   , routes = require('./routes')
+  , search = require('./routes/search')
   , http = require('http')
   , path = require('path');
 
@@ -28,6 +29,10 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.post('/', routes.search);
+app.get('/search/:term', search.results);
+app.get('/search', function (req, res) {
+	res.redirect('/');
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
