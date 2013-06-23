@@ -44,9 +44,28 @@ h1.logo
 .search-form
 	background: #D9D1B8
 	border-radius(8px)
-	margin: 60px auto 0
+	left: 50%
+	margin: -125px 0 0 -250px
 	padding: 20px
+	position: absolute
+	top: 50%
 	width: 460px
+
+	p
+		margin: 0
+
+	.input-container
+		margin: 20px 0
+
+	input
+		border: 0
+		border-radius(2px)
+		font-size: 16px
+		height: 20px
+		line-height: 20px
+		margin: 0
+		padding: 5px 5px
+		width: 450px
 
 header.search-form
 	border-radius(0)
@@ -59,24 +78,8 @@ header.search-form
 	width: 100%
 	z-index: 2
 
-header.search-form p
-	text-align: center
-
-.search-form p
-	margin: 0
-
-.search-form .input-container
-	margin: 20px 0
-
-.search-form input
-	border: 0
-	border-radius(2px)
-	font-size: 16px
-	height: 20px
-	line-height: 20px
-	margin: 0
-	padding: 5px 5px
-	width: 450px
+	p
+		text-align: center
 
 .button-container
 	text-align: center
@@ -102,49 +105,49 @@ button
 	margin: 90px auto 30px
 	width: 700px
 
-.search-results h2
-	font-size: 18px
-	margin-bottom: 10px
+	h2
+		font-size: 18px
+		margin-bottom: 10px
 
 .polls
 	margin: 10px auto 45px
 	padding: 0
 
-.polls li
-	display: block
-	line-height: 25px
-	list-style: none
-	position: relative
+	li
+		display: block
+		line-height: 25px
+		list-style: none
+		position: relative
 
-.polls .label
-	background: #CCC2A3
-	margin: 0 0 5px
-	overflow: hidden
-	padding: 0
-	width: 600px
+	.label
+		background: #CCC2A3
+		margin: 0 0 5px
+		overflow: hidden
+		padding: 0
+		width: 600px
 
-.polls .label strong
-	background: #AA2245
-	color: white
-	display: block
-	font-size: 14px
-	font-weight: normal
-	line-height: 25px
-	white-space: nowrap
-	width: 100%
+		strong
+			background: #AA2245
+			color: white
+			display: block
+			font-size: 14px
+			font-weight: normal
+			line-height: 25px
+			white-space: nowrap
+			width: 100%
 
-.polls .label strong:before
-	content: ""
-	display: inline-block
-	width: 5px
+		strong:before
+			content: ""
+			display: inline-block
+			width: 5px
 
-.polls .label .is-leading
-	background: #F81057
+		.is-leading
+			background: #F81057
 
-.polls .votes
-	position: absolute
-	right: 0
-	text-align: right;
-	top: 0
-	white-space: nowrap
-	width: 100px
+	.votes
+		position: absolute
+		right: 0
+		text-align: right;
+		top: 0
+		white-space: nowrap
+		width: 100px

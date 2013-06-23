@@ -14,7 +14,11 @@ TopicProvider.prototype.search = function(term, callback) {
 		if (err) {
 			callback(error);
 		} else {
-			term = term.trim().replace(/\s+/g, '\\s+');
+			term = term.trim().replace(/\s+/g, '\\s*');
+
+			if (/".+"/.test(term)) {
+				term = term.replace(/"(.*?)"/g, '(^|\\s+|")$1("|\\s+|$)');
+			}
 			topic_collection.find({title: {$regex: new RegExp(term, "i")}}).sort(
 					{votes:-1}).limit(100).toArray(function(err, results) {
 				if (err) {

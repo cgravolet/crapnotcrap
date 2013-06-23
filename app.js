@@ -29,10 +29,9 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.post('/', routes.search);
+app.get('/search', search.results);
 app.get('/search/:term', search.results);
-app.get('/search', function (req, res) {
-	res.redirect('/');
-});
+app.get('/search/:term/:page', search.results);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
