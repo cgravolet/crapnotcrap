@@ -12,6 +12,8 @@ block content
 			- each topic in topics
 				h2.topic
 					a(href='http://www.electricalaudio.com/phpBB3/viewtopic.php?f=6&view=viewpoll&t=#{topic.topicid}')= topic.title
+				- if (topic.hasOwnProperty("subject"))
+					p.subject= topic.subject
 				ul.polls
 					- each poll in topic.polls
 						li
@@ -21,4 +23,4 @@ block content
 								.label(title=poll.label) <strong style="width:#{poll.percentWidth}%">#{poll.label}</strong>
 							.votes #{poll.votes} votes
 		- else
-			p.no-results Your search returned <strong>nothing</strong>...
+			p.no-results No waffles about it, your search was <strong>crap</strong>. Try again.

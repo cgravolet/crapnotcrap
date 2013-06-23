@@ -89,7 +89,7 @@ button {
   background-image: -o-linear-gradient(top, #dfa57f, #d07c61);
   background-image: -ms-linear-gradient(top, #dfa57f, #d07c61);
   background-image: linear-gradient(top, #dfa57f, #d07c61);
-  border: none;
+  border: 1px solid #d07d61;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -98,6 +98,7 @@ button {
   font-size: 16px;
   height: 30px;
   line-height: 27px;
+  padding: 0;
   width: 150px;
 }
 .search-results {
@@ -108,8 +109,13 @@ button {
   font-size: 18px;
   margin-bottom: 10px;
 }
+.subject {
+  color: #99927a;
+  font-size: 14px;
+  margin: 0;
+}
 .polls {
-  margin: 10px auto 45px;
+  margin: 5px auto 45px;
   padding: 0;
 }
 .polls li {
