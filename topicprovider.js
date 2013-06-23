@@ -31,6 +31,12 @@ TopicProvider.prototype.search = function(term, callback) {
 	});
 };
 
+function cleanseTitle(title) {
+	title = title.replace(/&quot;/gi, '"');
+	title = title.replace(/&amp;/gi, '&');
+	return title;
+}
+
 function parseResults(results) {
 	results.forEach(function (item) {
 		if (item.polls && item.polls.length) {
@@ -48,6 +54,7 @@ function parseResults(results) {
 			var topVotes = item.polls[0].votes;
 			item.polls.forEach(function (poll) {
 				poll.percentWidth = Math.round(poll.votes / topVotes * 100);
+				poll.label = cleanseTitle(poll.label);
 			});
 		} else {
 			item.polls = [

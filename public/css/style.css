@@ -154,3 +154,11 @@ button {
 .no-results {
   text-align: center;
 }
+.no-results img {
+  -webkit-box-shadow: 1px 1px 5px 0 #666;
+  -moz-box-shadow: 1px 1px 5px 0 #666;
+  box-shadow: 1px 1px 5px 0 #666;
+  height: 300px;
+  margin-top: 30px;
+  width: 400px;
+}
