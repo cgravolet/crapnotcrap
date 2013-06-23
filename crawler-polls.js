@@ -35,8 +35,8 @@ function initialize() {
 		} else {
 			DB = db;
 			messageHandler("dbConnectionOpened");
-			DB.collection("topics").find({polls: {$exists:false}},
-					{topicid: 1, _id: 0}).toArray(function (err, items) {
+			DB.collection("topics").find({subject: {$exists:false}},
+					{topicid: 1, _id: 0}).sort({votes:1}).toArray(function (err, items) {
 				topics = items;
 				messageHandler("topicsRetrieved");
 			});
@@ -52,7 +52,7 @@ function messageHandler(name, message) {
 		break;
 	case "topicParsed":
 		console.log(message.topicid + " " + name);
-		updateTopic(message.topicid, message.polls, message.votes);
+		updateTopic(message.topicid, message.subject, message.polls, message.votes);
 		break;
 	case "topicsRetrieved":
 		console.log(name);
@@ -70,9 +70,10 @@ function messageHandler(name, message) {
 function parseTopic(window, topicid) {
 	var $, polls, result, votes;
 
-	$     = window.$;
-	polls = [];
-	votes = 0;
+	$       = window.$;
+	polls   = [];
+	subject = $(".content h2").text() || "";
+	votes   = 0;
 
 	$(".polls .resultbar div").each(function () {
 		result = parseFloat($(this).text());
@@ -84,6 +85,7 @@ function parseTopic(window, topicid) {
 	});
 
 	messageHandler("topicParsed", {
+		subject: subject.trim(),
 		polls:   polls,
 		topicid: topicid,
 		votes:   votes
@@ -109,10 +111,12 @@ function shutdown() {
 	}, 10000);
 }
 
-function updateTopic(topicid, polls, votes) {
+function updateTopic(topicid, subject, polls, votes) {
 	var data = {
-		polls: polls,
-		votes: votes
+		polls_last_updated: new Date(),
+		subject: subject,
+		polls:   polls,
+		votes:   votes
 	};
 
 	DB.collection("topics").update({topicid: topicid}, {$set: data}, {w:1},

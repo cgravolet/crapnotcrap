@@ -72,6 +72,7 @@ function parseTopic($) {
 	updateTopic({
 		replies: parseFloat(posts),
 		title:   title.trim(),
+		topic_last_updated: new Date(),
 		topicid: parseFloat(id),
 		views:   parseFloat(views)
 	});
@@ -114,10 +115,13 @@ function shutdown() {
 }
 
 function updateTopic(topic) {
-	_DB.collection("topics").update({topicid: topic.topicid}, {$set: {
+	var data = {
+		topic_last_updated: topic.topic_last_updated,
 		replies: topic.replies,
 		views:   topic.views
-	}}, {w:1}, function (err, result) {
+	};
+	_DB.collection("topics").update({topicid: topic.topicid}, {$set: data}, {w:1},
+			function (err, result) {
 		if (err) {
 			console.dir(err);
 		} else if (result === 0) {
