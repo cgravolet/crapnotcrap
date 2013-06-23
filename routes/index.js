@@ -6,6 +6,6 @@ exports.index = function (req, res){
 };
 
 exports.search = function (req, res) {
-	var term = req.body.search.replace(/[\\\/\(\);]+/gi, '').trim();
+	var term = req.body.search.replace(/[\\\(\);]+/gi, '').trim();
 	res.redirect('/search/' + encodeURIComponent(term));
 };
