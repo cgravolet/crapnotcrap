@@ -7,15 +7,19 @@
  *     - Add support for ENV variables, like db info, delay, etc
  */
 
-var _CNCURL, _DBURL, db, jsdom, mongo, request, topics;
+var _CNCURL = "http://www.electricalaudio.com/phpBB3/viewtopic.php?f=6&view=viewpoll&t=";
+var _DBURL  = "mongodb://localhost:27017/crapnotcrap";
+var db      = null;
+var jsdom   = require("jsdom");
+var mongo   = require("mongodb").MongoClient;
+var request = require("request");
+var topics  = null;
 
-_CNCURL = "http://www.electricalaudio.com/phpBB3/viewtopic.php?f=6&view=viewpoll&t=";
-_DBURL  = "mongodb://localhost:27017/crapnotcrap";
-db      = null;
-jsdom   = require("jsdom");
-mongo   = require("mongodb").MongoClient;
-request = require("request");
-
+/**
+ * Requests the topic content for a specific topic from the EA forum
+ *
+ * @param {Number} topicid The topic id, derp
+ */
 function getTopicById(topicid) {
 	console.log(topicid + " Retrieving topic " + topics.length + "...");
 	request(_CNCURL + topicid, function (err, res, body) {
@@ -36,18 +40,12 @@ function getTopicById(topicid) {
 	});
 }
 
+/**
+ * Retrieves a list of topics that need to be updated from the database
+ */
 function getTopics() {
-	var limit, query, start;
-
-	start = new Date();
-	start.setDate(start.getDate()-2);
-	limit = {topicid: 1, _id: 0};
-	query = {
-		topic_last_updated: {
-			$gte: start,
-			$lt: new Date()
-		}
-	};
+	var limit = {topicid: 1, _id: 0};
+	var query = {update_required: true};
 
 	db.collection("topics").find(query, limit).sort({topic_last_updated: 1}).toArray(
 			function (err, items) {
@@ -56,6 +54,9 @@ function getTopics() {
 	});
 }
 
+/**
+ * Initialization method, opens a connection to the database
+ */
 function initialize() {
 	mongo.connect(_DBURL, function (err, database) {
 		if (err) {
@@ -68,6 +69,12 @@ function initialize() {
 	});
 }
 
+/**
+ * Handles incoming messages, a router of sorts
+ *
+ * @param {String} name The message name
+ * @param message Any data that needs to be passed along
+ */
 function messageHandler(name, message) {
 	switch (name) {
 	case "dbConnectionOpened":
@@ -94,13 +101,19 @@ function messageHandler(name, message) {
 	}
 }
 
+/**
+ * Parses poll/vote information from the topic content that was retrieved from
+ * the HTTP request of the EA forum
+ *
+ * @param {Object} window The jsdom window object
+ * @param {Number} topicid The topic id
+ */
 function parseTopic(window, topicid) {
-	var $, polls, result, votes;
-
-	$       = window.$;
-	polls   = [];
-	subject = $(".content h2").text() || "";
-	votes   = 0;
+	var $       = window.$;
+	var polls   = [];
+	var result  = null;
+	var subject = $(".content h2").text() || "";
+	var votes   = 0;
 
 	$(".polls .resultbar div").each(function () {
 		result = parseFloat($(this).text());
@@ -122,6 +135,10 @@ function parseTopic(window, topicid) {
 	window.close();
 }
 
+/**
+ * Decides whether or not to request a new topic, this get's called after each
+ * topic has been parsed and controls the flow of the HTTP requests
+ */
 function requestTopic() {
 	if (topics.length) {
 		getTopicById(topics.pop().topicid);
@@ -130,6 +147,10 @@ function requestTopic() {
 	}
 }
 
+/**
+ * Shuts down the node process, adds a slight delay to make sure any
+ * asynchronous database interactinos complete successfully
+ */
 function shutdown() {
 	console.log("Shutting down...");
 	setTimeout(function () {
@@ -138,6 +159,15 @@ function shutdown() {
 	}, 10000);
 }
 
+/**
+ * Updates the document in the database with new information that was parsed
+ * from the HTTP request
+ *
+ * @param {Number} topicid The id of the topic that should be updated
+ * @param {String} subject The subject text of the poll
+ * @param {Array} polls An array of poll objects {label:"",votes:0}
+ * @param {Number} votes The total number of votes
+ */
 function updateTopic(topicid, subject, polls, votes) {
 	var data = {
 		polls_last_updated: new Date(),
