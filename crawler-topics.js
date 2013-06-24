@@ -1,11 +1,18 @@
-"use strict";
+/**
+ * Crawls the EA Crap/NotCrap forum list pages to find new topics and update the
+ * reply/view count of older topics
+ *
+ * @TODO:
+ *     - Make this more extensible
+ *     - Add support for ENV variables, like db info, delay, etc
+ */
 
-var _CNCURL, _DBURL, _DB, curIndex, jsdom, maxIndex, mongo, request;
+var _CNCURL, _DBURL, db, curIndex, jsdom, maxIndex, mongo, request;
 
 _CNCURL  = "http://www.electricalaudio.com/phpBB3/viewforum.php?f=6&start=";
 _DBURL   = "mongodb://localhost:27017/crapnotcrap";
 curIndex = 0;
-_DB      = null;
+db       = null;
 jsdom    = require("jsdom");
 mongo    = require("mongodb").MongoClient;
 request  = require("request");
@@ -21,29 +28,29 @@ function getMaxIndex($) {
 
 function getTopicListAtIndex(index) {
 	request(_CNCURL + index, function (err, res, body) {
-		if (!err && res.statusCode === 200) {
+		if (err) {
+			console.dir(err);
+		} else if (res.statusCode === 200) {
 			messageHandler("topicListRetrieved");
 			jsdom.env(body, ["http://code.jquery.com/jquery.js"], parseTopicList);
-		} else if (err) {
-			console.dir(err);
 		}
 	});
 }
 
 function initialize() {
-	mongo.connect(_DBURL, function (err, db) {
+	mongo.connect(_DBURL, function (err, database) {
 		if (err) {
 			console.dir(err);
 			shutdown();
 		} else {
-			_DB = db;
+			db = database;
 			messageHandler("dbConnectionEstablished");
 		}
 	});
 }
 
 function insertTopic(topic) {
-	_DB.collection("topics").insert(topic, {w:1}, function (err, result) {
+	db.collection("topics").insert(topic, {w:1}, function (err, result) {
 		if (err) {
 			console.dir(err);
 		} else {
@@ -120,7 +127,7 @@ function updateTopic(topic) {
 		replies: topic.replies,
 		views:   topic.views
 	};
-	_DB.collection("topics").update({topicid: topic.topicid}, {$set: data}, {w:1},
+	db.collection("topics").update({topicid: topic.topicid}, {$set: data}, {w:1},
 			function (err, result) {
 		if (err) {
 			console.dir(err);

@@ -1,8 +1,17 @@
-var _CNCURL, _DBURL, DB, jsdom, mongo, request, topics;
+/**
+ * Crawls the EA Crap/NotCrap forum for individual poll information one topic at
+ * a time.
+ *
+ * @TODO:
+ *     - Make this more extensible
+ *     - Add support for ENV variables, like db info, delay, etc
+ */
+
+var _CNCURL, _DBURL, db, jsdom, mongo, request, topics;
 
 _CNCURL = "http://www.electricalaudio.com/phpBB3/viewtopic.php?f=6&view=viewpoll&t=";
 _DBURL  = "mongodb://localhost:27017/crapnotcrap";
-DB      = null;
+db      = null;
 jsdom   = require("jsdom");
 mongo   = require("mongodb").MongoClient;
 request = require("request");
@@ -10,7 +19,9 @@ request = require("request");
 function getTopicById(topicid) {
 	console.log(topicid + " Retrieving topic " + topics.length + "...");
 	request(_CNCURL + topicid, function (err, res, body) {
-		if (!err && res.statusCode === 200) {
+		if (err) {
+			console.dir(err);
+		} else if (res.statusCode === 200) {
 			jsdom.env(body, ["./public/js/lib/jquery-1.10.1.js"], function (err, window) {
 				if (err) {
 					console.dir(err);
@@ -21,31 +32,47 @@ function getTopicById(topicid) {
 					});
 				}
 			});
-		} else if (err) {
-			console.dir(err);
 		}
 	});
 }
 
+function getTopics() {
+	var limit, query, start;
+
+	start = new Date();
+	start.setDate(start.getDate()-2);
+	limit = {topicid: 1, _id: 0};
+	query = {
+		topic_last_updated: {
+			$gte: start,
+			$lt: new Date()
+		}
+	};
+
+	db.collection("topics").find(query, limit).sort({topic_last_updated: 1}).toArray(
+			function (err, items) {
+		topics = items;
+		messageHandler("topicsRetrieved");
+	});
+}
+
 function initialize() {
-	mongo.connect(_DBURL, function (err, db) {
+	mongo.connect(_DBURL, function (err, database) {
 		if (err) {
 			console.dir(err);
 			shutdown();
 		} else {
-			DB = db;
+			db = database;
 			messageHandler("dbConnectionOpened");
-			DB.collection("topics").find({subject: {$exists:false}},
-					{topicid: 1, _id: 0}).sort({votes:1}).toArray(function (err, items) {
-				topics = items;
-				messageHandler("topicsRetrieved");
-			});
 		}
 	});
 }
 
 function messageHandler(name, message) {
 	switch (name) {
+	case "dbConnectionOpened":
+		getTopics();
+		break;
 	case "topicContentRetrieved":
 		console.log(message.topicid + " " + name);
 		parseTopic(message.window, message.topicid);
@@ -119,7 +146,7 @@ function updateTopic(topicid, subject, polls, votes) {
 		votes:   votes
 	};
 
-	DB.collection("topics").update({topicid: topicid}, {$set: data}, {w:1},
+	db.collection("topics").update({topicid: topicid}, {$set: data}, {w:1},
 			function (err, result) {
 		if (err) {
 			console.dir(err);
