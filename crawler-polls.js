@@ -149,7 +149,7 @@ function requestTopic() {
 
 /**
  * Shuts down the node process, adds a slight delay to make sure any
- * asynchronous database interactinos complete successfully
+ * asynchronous database interactions complete successfully
  */
 function shutdown() {
 	console.log("Shutting down...");
@@ -173,6 +173,7 @@ function updateTopic(topicid, subject, polls, votes) {
 		polls_last_updated: new Date(),
 		subject: subject,
 		polls:   polls,
+		update_required: false,
 		votes:   votes
 	};
 

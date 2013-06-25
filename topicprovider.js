@@ -47,6 +47,7 @@ TopicProvider.prototype.search = function(term, callback) {
  * Temporary solution for fixing an issue that causes HTML entities to be
  * escaped when passed to the jade template
  *
+ * @param {String} title
  * @private
  */
 function cleanseTitle(title) {
@@ -61,11 +62,14 @@ function cleanseTitle(title) {
  * determining which poll is in the lead and calculating the widths of the poll
  * chart
  *
+ * @param {Array} results
  * @private
  */
 function parseResults(results) {
 	results.forEach(function (item) {
 		if (item.polls && item.polls.length) {
+			var topVotes = item.polls[0].votes;
+
 			item.polls.sort(function (a, b) {
 				if (a.votes > b.votes) {
 					return -1;
@@ -73,11 +77,10 @@ function parseResults(results) {
 				return 1;
 			});
 
-			if (item.polls.length > 1 && item.polls[0].votes > item.polls[1].votes) {
+			if (item.polls.length > 1 && topVotes > item.polls[1].votes) {
 				item.polls[0].leading = true;
 			}
 			
-			var topVotes = item.polls[0].votes;
 			item.polls.forEach(function (poll) {
 				poll.percentWidth = Math.round(poll.votes / topVotes * 100);
 				poll.label = cleanseTitle(poll.label);

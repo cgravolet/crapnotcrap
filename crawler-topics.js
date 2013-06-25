@@ -158,7 +158,7 @@ function requestTopicList() {
 
 /**
  * Shuts down the node process, adds a slight delay to make sure any
- * asynchronous database interactinos complete successfully
+ * asynchronous database interactions complete successfully
  */
 function shutdown() {
 	console.log("Shutting down...");
@@ -170,7 +170,7 @@ function shutdown() {
 
 /**
  * Attempts to update information for a specific topic if it already exists in
- * the database, if this fails then it passes it on to the insertTopid method.
+ * the database, if this fails then it passes it on to the insertTopic method.
  *
  * @param {Object} topic
  */
