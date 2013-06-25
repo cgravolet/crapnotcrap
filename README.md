@@ -19,9 +19,10 @@ installing and running mongoDB.
 
 ##Restoring the database from backup
 
-A snapshot of the mongo database is stored in the database directory, running
-the following command from the root directory of the project with mongod running
-should restore the database from the snapshot provided:
+A snapshot of the mongo database is available in the `database_snapshot`
+directory. Running the following command from the root directory of the
+project with mongod running should restore the database from the snapshot
+provided:
 
 	$ mongorestore --drop database_snapshot
 
