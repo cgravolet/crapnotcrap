@@ -47,7 +47,7 @@ function getTopics() {
 	var limit = {topicid: 1, _id: 0};
 	var query = {update_required: true};
 
-	db.collection("topics").find(query, limit).sort({topic_last_updated: 1}).toArray(
+	db.collection("topics").find(query, limit).sort({votes: 1}).toArray(
 			function (err, items) {
 		topics = items;
 		messageHandler("topicsRetrieved");
