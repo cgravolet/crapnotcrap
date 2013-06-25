@@ -17,10 +17,11 @@ block content
 				ul.polls
 					- each poll in topic.polls
 						li
-							- if (poll.leading)
-								.label(title=poll.label) <strong style="width:#{poll.percentWidth}%" class="is-leading">#{poll.label}</strong>
-							- else
-								.label(title=poll.label) <strong style="width:#{poll.percentWidth}%">#{poll.label}</strong>
+							.label(title=poll.label)
+								- if (poll.leading)
+									strong.is-leading(style="width:#{poll.percentWidth}%")= poll.label
+								- else
+									strong(style="width:#{poll.percentWidth}%")= poll.label
 							.votes #{poll.votes} votes
 		- else
 			p.no-results No waffles about it, your search was <strong>crap</strong>. Try again.

@@ -67,15 +67,11 @@ function cleanseTitle(title) {
  */
 function parseResults(results) {
 	results.forEach(function (item) {
-		if (item.polls && item.polls.length) {
-			var topVotes = item.polls[0].votes;
+		var topVotes;
 
-			item.polls.sort(function (a, b) {
-				if (a.votes > b.votes) {
-					return -1;
-				}
-				return 1;
-			});
+		if (item.polls && item.polls.length) {
+			item.polls.sort(sortPolls);
+			topVotes = item.polls[0].votes;
 
 			if (item.polls.length > 1 && topVotes > item.polls[1].votes) {
 				item.polls[0].leading = true;
@@ -93,6 +89,19 @@ function parseResults(results) {
 		}
 	});
 	return results;
+}
+
+/**
+ * Sorts poll objects by votes (descending)
+ *
+ * @param {Object} a First object to be compared
+ * @param {Object} b Second object to be compared
+ */
+function sortPolls(a, b) {
+	if (a.votes > b.votes) {
+		return -1;
+	}
+	return 1;
 }
 
 exports.TopicProvider = TopicProvider;
