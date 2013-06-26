@@ -13,7 +13,7 @@ TopicProvider.prototype.crap = function (callback) {
 		if (err) {
 			callback(err);
 		} else {
-			collection.find({'polls.0.label': {$regex: /^\s*c+r+a+p+\s*$/i}}).sort(
+			collection.find({'polls.0.label': {$regex: /^[^not]*c+r+a+p+[^not]*$/i}}).sort(
 					{"polls.0.votes": -1}).limit(100).toArray(function (err, results) {
 				if (err) {
 					callback(err);
@@ -30,7 +30,7 @@ TopicProvider.prototype.notcrap = function (callback) {
 		if (err) {
 			callback(err);
 		} else {
-			collection.find({'polls.0.label': {$regex: /^\s*n+.+c+r+a+p+\s*$/i}}).sort(
+			collection.find({'polls.0.label': {$regex: /^.*n+.+c+r+a+p+.*$/i}}).sort(
 					{"polls.0.votes": -1}).limit(100).toArray(function (err, results) {
 				if (err) {
 					callback(err);
