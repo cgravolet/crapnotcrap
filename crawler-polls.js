@@ -126,7 +126,7 @@ function parseTopic(window, topicid) {
 
 	messageHandler("topicParsed", {
 		subject: subject.trim(),
-		polls:   polls,
+		polls:   polls.sort(sortPoll),
 		topicid: topicid,
 		votes:   votes
 	});
@@ -157,6 +157,19 @@ function shutdown() {
 		console.log("End of program");
 		process.exit();
 	}, 10000);
+}
+
+/**
+ * Sorts poll objects by votes (descending)
+ *
+ * @param {Object} a First object to be compared
+ * @param {Object} b Second object to be compared
+ */
+function sortPoll(a, b) {
+	if (a.votes > b.votes) {
+		return -1;
+	}
+	return 1;
 }
 
 /**
