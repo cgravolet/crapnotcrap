@@ -71,22 +71,6 @@ function initialize() {
 }
 
 /**
- * Inserts the topic into the database, this only gets called when an update
- * fails
- *
- * @param {Object} topic A document to be inserted into the database
- */
-function insertTopic(topic) {
-	db.collection("topics").insert(topic, {w:1}, function (err, result) {
-		if (err) {
-			console.dir(err);
-		} else {
-			console.log("Inserted topic: " + topic.topicid + " " + topic.title);
-		}
-	});
-}
-
-/**
  * Handles incoming messages, a router of sorts
  *
  * @param {String} name The message name
@@ -175,20 +159,12 @@ function shutdown() {
  * @param {Object} topic
  */
 function updateTopic(topic) {
-	var data = {
-		topic_last_updated: topic.topic_last_updated,
-		replies: topic.replies,
-		update_required: topic.update_required,
-		views:   topic.views
-	};
-	db.collection("topics").update({topicid: topic.topicid}, {$set: data}, {w:1},
-			function (err, result) {
+	db.collection("topics").update({topicid: topic.topicid}, {$set: topic},
+			{upsert:true, w:1}, function (err, result) {
 		if (err) {
 			console.dir(err);
-		} else if (result === 0) {
-			insertTopic(topic);
 		} else {
-			console.log("Updated topic: " + topic.topicid + " " + topic.title)
+			console.log("Document saved: " + topic.topicid + " | " + topic.title)
 		}
 	});
 }
