@@ -8,13 +8,47 @@ function TopicProvider() {
 	});
 }
 
+TopicProvider.prototype.crap = function (callback) {
+	this.db.collection("topics", function (err, collection) {
+		if (err) {
+			callback(err);
+		} else {
+			collection.find({'polls.0.label': {$regex: /^\s*c+r+a+p+\s*$/i}}).sort(
+					{"polls.0.votes": -1}).limit(100).toArray(function (err, results) {
+				if (err) {
+					callback(err);
+				} else {
+					callback(null, parseResults(results));
+				}
+			});
+		}
+	});
+};
+
+TopicProvider.prototype.notcrap = function (callback) {
+	this.db.collection("topics", function (err, collection) {
+		if (err) {
+			callback(err);
+		} else {
+			collection.find({'polls.0.label': {$regex: /^\s*n+.+c+r+a+p+\s*$/i}}).sort(
+					{"polls.0.votes": -1}).limit(100).toArray(function (err, results) {
+				if (err) {
+					callback(err);
+				} else {
+					callback(null, parseResults(results));
+				}
+			});
+		}
+	});
+};
+
 /*
  * Searches for topics by title
  */
 TopicProvider.prototype.search = function(term, callback) {
-	this.db.collection('topics', function(err, topic_collection) {
+	this.db.collection('topics', function(err, collection) {
 		if (err) {
-			callback(error);
+			callback(err);
 		} else {
 			// Replaces space characters with a catch-all for any spaces
 			term = term.trim().replace(/\s+/g, '\\s*');
@@ -31,10 +65,10 @@ TopicProvider.prototype.search = function(term, callback) {
 				term = term.replace(/"(.*?)"/g, '(^|\\s+|")$1("|\\s+|$)');
 			}
 
-			topic_collection.find({title: {$regex: new RegExp(term, "i")}}).sort(
+			collection.find({title: {$regex: new RegExp(term, "i")}}).sort(
 					{votes:-1}).limit(100).toArray(function(err, results) {
 				if (err) {
-					callback(error);
+					callback(err);
 				} else {
 					callback(null, parseResults(results));
 				}

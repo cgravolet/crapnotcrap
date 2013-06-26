@@ -26,6 +26,8 @@ if ("development" == app.get("env")) {
 // Routes
 app.get("/", routes.index);
 app.post("/", routes.search);
+app.get("/crap", search.crap);
+app.get("/notcrap", search.notcrap);
 app.get("/search", search.results);
 app.get("/search/:term", search.results);
 app.get("/search/:term/:page", search.results);
