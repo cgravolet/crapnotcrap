@@ -55,7 +55,7 @@ TopicProvider.prototype.search = function(term, callback) {
 	}
 
 	var query = {title: {$regex: new RegExp(term, "i")}};
-	var sort  = {votes:1};
+	var sort  = {votes:-1};
 
 	this.db.collection("topics").find(query).sort(sort).limit(100).toArray(
 			function(err, results) {
