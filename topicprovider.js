@@ -1,5 +1,5 @@
 var _DBURL = "mongodb://localhost:27017/crapnotcrap";
-var mongo  = require('mongodb').MongoClient;
+var mongo  = require("mongodb").MongoClient;
 
 function TopicProvider() {
 	var self = this;
@@ -9,35 +9,27 @@ function TopicProvider() {
 }
 
 TopicProvider.prototype.crap = function (callback) {
-	this.db.collection("topics", function (err, collection) {
+	var query = {"polls.0.label": {$regex: /^[^not]*c+r+a+p+[^not]*$/i}};
+	var sort  = {"polls.0.votes": -1};
+	this.db.collection("topics").find(query).sort(sort).limit(100).toArray(
+			function (err, results) {
 		if (err) {
 			callback(err);
 		} else {
-			collection.find({'polls.0.label': {$regex: /^[^not]*c+r+a+p+[^not]*$/i}}).sort(
-					{"polls.0.votes": -1}).limit(100).toArray(function (err, results) {
-				if (err) {
-					callback(err);
-				} else {
-					callback(null, parseResults(results));
-				}
-			});
+			callback(null, parseResults(results));
 		}
 	});
 };
 
 TopicProvider.prototype.notcrap = function (callback) {
-	this.db.collection("topics", function (err, collection) {
+	var query = {"polls.0.label": {$regex: /^.*n+.+c+r+a+p+.*$/i}};
+	var sort  = {"polls.0.votes": -1};
+	this.db.collection("topics").find().sort(sort).limit(100).toArray(
+			function (err, results) {
 		if (err) {
 			callback(err);
 		} else {
-			collection.find({'polls.0.label': {$regex: /^.*n+.+c+r+a+p+.*$/i}}).sort(
-					{"polls.0.votes": -1}).limit(100).toArray(function (err, results) {
-				if (err) {
-					callback(err);
-				} else {
-					callback(null, parseResults(results));
-				}
-			});
+			callback(null, parseResults(results));
 		}
 	});
 };
@@ -46,33 +38,45 @@ TopicProvider.prototype.notcrap = function (callback) {
  * Searches for topics by title
  */
 TopicProvider.prototype.search = function(term, callback) {
-	this.db.collection('topics', function(err, collection) {
+
+	// Replaces space characters with a catch-all for any spaces
+	term = term.trim().replace(/\s+/g, "\\s*");
+
+	/* 
+	 * Adds better support for searching with quotes, for instance
+	 * searching for the band "UT" would be near impossible without
+	 * this.
+	 *
+	 * @TODO this breaks down when searching for multiple quoted
+	 *       keywords
+	 */
+	if (/".+"/.test(term)) {
+		term = term.replace(/"(.*?)"/g, '(^|\\s+|")$1("|\\s+|$)');
+	}
+
+	var query = {title: {$regex: new RegExp(term, "i")}};
+	var sort  = {votes:1};
+
+	this.db.collection("topics").find(query).sort(sort).limit(100).toArray(
+			function(err, results) {
 		if (err) {
 			callback(err);
 		} else {
-			// Replaces space characters with a catch-all for any spaces
-			term = term.trim().replace(/\s+/g, '\\s*');
+			callback(null, parseResults(results));
+		}
+	});
+};
 
-			/* 
-			 * Adds better support for searching with quotes, for instance
-			 * searching for the band "UT" would be near impossible without
-			 * this.
-			 *
-			 * @TODO this breaks down when searching for multiple quoted
-			 *       keywords
-			 */
-			if (/".+"/.test(term)) {
-				term = term.replace(/"(.*?)"/g, '(^|\\s+|")$1("|\\s+|$)');
-			}
+TopicProvider.prototype.thunderdome = function (callback) {
+	var query = {"title": {$regex: /(dome.*[:;-]+|\s+vs\.*\s+|either\s*\/\s*or)/i}};
+	var sort =  {votes: -1};
 
-			collection.find({title: {$regex: new RegExp(term, "i")}}).sort(
-					{votes:-1}).limit(100).toArray(function(err, results) {
-				if (err) {
-					callback(err);
-				} else {
-					callback(null, parseResults(results));
-				}
-			});
+	this.db.collection("topics").find(query).sort(sort).limit(100).toArray(
+			function (err, results) {
+		if (err) {
+			callback(err);
+		} else {
+			callback(null, parseResults(results));
 		}
 	});
 };
@@ -86,7 +90,7 @@ TopicProvider.prototype.search = function(term, callback) {
  */
 function cleanseTitle(title) {
 	title = title.replace(/&quot;/gi, '"');
-	title = title.replace(/&amp;/gi, '&');
+	title = title.replace(/&amp;/gi, "&");
 	return title;
 }
 

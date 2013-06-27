@@ -28,9 +28,9 @@ app.get("/", routes.index);
 app.post("/", routes.search);
 app.get("/crap", search.crap);
 app.get("/notcrap", search.notcrap);
-app.get("/search", search.results);
-app.get("/search/:term", search.results);
-app.get("/search/:term/:page", search.results);
+app.get("/search", search.term);
+app.get("/search/:term", search.term);
+app.get("/thunderdome", search.thunderdome);
 
 // Start the server
 http.createServer(app).listen(app.get("port"), function(){
