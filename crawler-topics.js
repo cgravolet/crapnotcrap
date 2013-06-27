@@ -10,12 +10,14 @@
 
 var _CNCURL  = "http://www.electricalaudio.com/phpBB3/viewforum.php?f=6&start=";
 var _DBURL   = "mongodb://localhost:27017/crapnotcrap";
+var args     = process.argv.slice(2);
 var curIndex = 0;
 var db       = null;
 var maxIndex = null;
 var jsdom    = require("jsdom");
 var mongo    = require("mongodb").MongoClient;
 var request  = require("request");
+var single   = args.indexOf("single") >= 0;
 
 /**
  * Retrieves the index of the last page of results so the crawler knows once
@@ -130,7 +132,8 @@ function parseTopicList($) {
  */
 function requestTopicList() {
 	if ( (maxIndex && curIndex > maxIndex) ||
-			(!maxIndex && curIndex > 200) ) {
+			(!maxIndex && curIndex > 200) ||
+			(single && curIndex > 0) ) {
 		shutdown();
 	} else {
 		console.log("Retrieving topics at index: " + curIndex +
