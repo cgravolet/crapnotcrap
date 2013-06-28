@@ -81,15 +81,12 @@ function messageHandler(name, message) {
 		getTopics();
 		break;
 	case "topicContentRetrieved":
-		console.log(message.topicid + " " + name);
 		parseTopic(message.window, message.topicid);
 		break;
 	case "topicParsed":
-		console.log(message.topicid + " " + name);
 		updateTopic(message.topicid, message.subject, message.polls, message.votes);
 		break;
 	case "topicsRetrieved":
-		console.log(name);
 		requestTopic();
 		break;
 	case "topicUpdated":
