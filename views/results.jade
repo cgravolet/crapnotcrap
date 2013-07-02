@@ -9,11 +9,13 @@ block content
 		
 	section.search-results
 		- if (topics.length)
-			- if (pagination.length)
-				div.pagination
+			- if (pagination.length > 1)
+				div.pagination-top
 					- each page in pagination
 						- if (page.url)
 							a(href="#{page.url}")= page.label
+						- else if (page.selected)
+							strong= page.label
 						- else
 							span= page.label
 			- each topic in topics
@@ -30,11 +32,13 @@ block content
 								- else
 									strong(style="width:#{poll.percentWidth}%")= poll.label
 							.votes #{poll.votes} votes
-			- if (pagination.length)
-				div.pagination
+			- if (pagination.length > 1)
+				div.pagination-bottom
 					- each page in pagination
 						- if (page.url)
 							a(href="#{page.url}")= page.label
+						- else if (page.selected)
+							strong= page.label
 						- else
 							span= page.label
 		- else

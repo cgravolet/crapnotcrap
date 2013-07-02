@@ -168,12 +168,25 @@ button {
   white-space: nowrap;
   width: 100px;
 }
-.pagination {
+.pagination-bottom,
+.pagination-top {
+  border-bottom: 1px solid #d9d1b8;
+  padding-bottom: 15px;
   text-align: right;
 }
-.pagination a,
-.pagination span {
+.pagination-bottom a,
+.pagination-top a,
+.pagination-bottom span,
+.pagination-top span,
+.pagination-bottom strong,
+.pagination-top strong {
   padding: 0 3px;
+}
+.pagination-bottom {
+  border-bottom: 0;
+  border-top: 1px solid #d9d1b8;
+  padding-bottom: 0;
+  padding-top: 15px;
 }
 .no-results {
   text-align: center;

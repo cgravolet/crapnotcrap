@@ -169,11 +169,20 @@ button
 		white-space: nowrap
 		width: 100px
 
-.pagination
+.pagination-bottom,
+.pagination-top
+	border-bottom: 1px solid #D9D1B8
+	padding-bottom: 15px
 	text-align: right
 
-	a, span
+	a, span, strong
 		padding: 0 3px
+	
+.pagination-bottom
+	border-bottom: 0
+	border-top: 1px solid #D9D1B8
+	padding-bottom: 0
+	padding-top: 15px
 
 .no-results
 	text-align: center
