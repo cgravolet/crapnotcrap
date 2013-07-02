@@ -168,6 +168,13 @@ button {
   white-space: nowrap;
   width: 100px;
 }
+.pagination {
+  text-align: right;
+}
+.pagination a,
+.pagination span {
+  padding: 0 3px;
+}
 .no-results {
   text-align: center;
 }
