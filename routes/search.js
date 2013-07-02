@@ -79,12 +79,17 @@ function getPaginationArray(total, max, page, req) {
 		};
 
 		if (currentPage !== page) {
-			paginationObj.url = req.url + "/" + currentPage;
+			paginationObj.url = req.url.replace(/\/[0-9]*\/?$/, "") + "/" + currentPage;
+		} else {
+			paginationObj.selected = true;
 		}
 
-		if ( (currentPage - page >= -4 && currentPage - page <= 4) ||
+		if ( (currentPage - page >= -3 && currentPage - page <= 3) ||
+				(page <= 1 && currentPage - page <= 4) ||
 				(currentPage === 1 || currentPage === pageCount) ) {
 			paginationArray.push(paginationObj);
+		} else if (currentPage === 2 || currentPage === pageCount - 1) {
+			paginationArray.push({label: "..."});
 		}
 	}
 
