@@ -9,9 +9,12 @@ function TopicProvider() {
 }
 
 TopicProvider.prototype.crap = function (callback) {
-	var query = {"polls.0.label": {$regex: /^[^not]*c+r+a+p+[^not]*$/i}};
 	var sort  = {"polls.0.votes": -1};
-	this.db.collection("topics").find(query).sort(sort).limit(100).toArray(
+	var query = {
+		"polls.0.label": {$regex: /^[^not]*c+r+a+p+[^not]*$/i},
+		"polls.0.votes": {$gt: 0}
+	};
+	this.db.collection("topics").find(query).sort(sort).toArray(
 			function (err, results) {
 		if (err) {
 			callback(err);
@@ -22,9 +25,12 @@ TopicProvider.prototype.crap = function (callback) {
 };
 
 TopicProvider.prototype.notcrap = function (callback) {
-	var query = {"polls.0.label": {$regex: /^.*n+.+c+r+a+p+.*$/i}};
 	var sort  = {"polls.0.votes": -1};
-	this.db.collection("topics").find().sort(sort).limit(100).toArray(
+	var query = {
+		"polls.0.label": {$regex: /^.*n+.+c+r+a+p+.*$/i},
+		"polls.0.votes": {$gt: 0}
+	};
+	this.db.collection("topics").find().sort(sort).toArray(
 			function (err, results) {
 		if (err) {
 			callback(err);
@@ -57,12 +63,12 @@ TopicProvider.prototype.search = function(term, callback) {
 	var query = {title: {$regex: new RegExp(term, "i")}};
 	var sort  = {votes:-1};
 
-	this.db.collection("topics").find(query).sort(sort).limit(100).toArray(
-			function(err, results) {
+	this.db.collection("topics").find(query).sort(sort).toArray(
+			function(err, items) {
 		if (err) {
 			callback(err);
 		} else {
-			callback(null, parseResults(results));
+			callback(null, parseResults(items));
 		}
 	});
 };
@@ -71,7 +77,7 @@ TopicProvider.prototype.thunderdome = function (callback) {
 	var query = {"title": {$regex: /(dome.*[:;-]+|\s+vs\.*\s+|either\s*\/\s*or)/i}};
 	var sort =  {votes: -1};
 
-	this.db.collection("topics").find(query).sort(sort).limit(100).toArray(
+	this.db.collection("topics").find(query).sort(sort).toArray(
 			function (err, results) {
 		if (err) {
 			callback(err);
