@@ -26,10 +26,14 @@ if ("development" == app.get("env")) {
 app.get("/", routes.index);
 app.post("/", routes.search);
 app.get("/crap", search.crap);
+app.get("/crap/:page", search.crap);
 app.get("/notcrap", search.notcrap);
+app.get("/notcrap/:page", search.notcrap);
 app.get("/search", search.term);
 app.get("/search/:term", search.term);
+app.get("/search/:term/:page", search.term);
 app.get("/thunderdome", search.thunderdome);
+app.get("/thunderdome/:page", search.thunderdome);
 
 // Start the server
 http.createServer(app).listen(app.get("port"), function(){
