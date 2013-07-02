@@ -9,6 +9,13 @@ block content
 		
 	section.search-results
 		- if (topics.length)
+			- if (pagination.length)
+				div.pagination
+					- each page in pagination
+						- if (page.url)
+							a(href="#{page.url}")= page.label
+						- else
+							span= page.label
 			- each topic in topics
 				h2.topic
 					a(href='http://www.electricalaudio.com/phpBB3/viewtopic.php?f=6&view=viewpoll&t=#{topic.topicid}')= topic.title
@@ -23,5 +30,12 @@ block content
 								- else
 									strong(style="width:#{poll.percentWidth}%")= poll.label
 							.votes #{poll.votes} votes
+			- if (pagination.length)
+				div.pagination
+					- each page in pagination
+						- if (page.url)
+							a(href="#{page.url}")= page.label
+						- else
+							span= page.label
 		- else
 			p.no-results No waffles about it, your search was <strong>crap</strong>. Try again.
