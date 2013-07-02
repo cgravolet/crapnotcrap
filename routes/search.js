@@ -10,8 +10,14 @@ exports.term = function (req, res) {
 	var term = (req.params.term || "").replace(/_slash_/gi, "/");
 
 	topicProvider.search(term, function(err, topics) {
+		var pagination = getPaginationArray(topics.length, max, page, req);
+
+		if (!term) {
+			pagination = [];
+		}
+
 		res.render("results", {
-			pagination: getPaginationArray(topics.length, max, page, req),
+			pagination: pagination,
 			term:   term,
 			title:  "Search Results - Crap / Not Crap",
 			topics: topics.slice(page * max - max, page * max)
