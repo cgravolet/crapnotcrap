@@ -30,7 +30,7 @@ TopicProvider.prototype.notcrap = function (callback) {
 		"polls.0.label": {$regex: /^.*n+.+c+r+a+p+.*$/i},
 		"polls.0.votes": {$gt: 0}
 	};
-	this.db.collection("topics").find().sort(sort).toArray(
+	this.db.collection("topics").find(query).sort(sort).toArray(
 			function (err, results) {
 		if (err) {
 			callback(err);
