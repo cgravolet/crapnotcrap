@@ -5,23 +5,17 @@ var max = 100;
 /*
  * GET search results page
  */
-exports.term = function (req, res) {
+
+exports.all = function (req, res) {
 	var page = getPage(req);
-	var term = (req.params.term || "").replace(/_slash_/gi, "/");
 
-	topicProvider.search(term, function(err, topics) {
-		var pagination = getPaginationArray(topics.length, max, page, req);
-
-		if (!term) {
-			pagination = [];
-		}
-
+	topicProvider.search("", function (err, topics) {
 		res.render("results", {
-			pagination: pagination,
-			term:   term,
-			title:  "Search Results - Crap / Not Crap",
+			pagination: getPaginationArray(topics.length, max, page, req),
+			title:  "All Results - Crap / Not Crap",
 			topics: topics.slice(page * max - max, page * max)
 		});
+		topics = null;
 	});
 };
 
@@ -35,6 +29,7 @@ exports.crap = function (req, res) {
 			topics: topics.slice(page * max - max, page * max),
 			url: req.url
 		});
+		topics = null;
 	});
 };
 
@@ -47,6 +42,26 @@ exports.notcrap = function (req, res) {
 			title: "The Not Crap List - Crap / Not Crap",
 			topics: topics.slice(page * max - max, page * max)
 		});
+		topics = null;
+	});
+};
+
+exports.term = function (req, res) {
+	var page = getPage(req);
+	var term = (req.params.term || "").replace(/_slash_/gi, "/");
+
+	if (!term) {
+		res.redirect("/all");
+	}
+
+	topicProvider.search(term, function(err, topics) {
+		res.render("results", {
+			pagination: getPaginationArray(topics.length, max, page, req),
+			term:   term,
+			title:  "Search Results - Crap / Not Crap",
+			topics: topics.slice(page * max - max, page * max)
+		});
+		topics = null;
 	});
 };
 
@@ -59,6 +74,7 @@ exports.thunderdome = function (req, res) {
 			title: "Thunderdomes - Crap / Not Crap",
 			topics: topics.slice(page * max - max, page * max)
 		});
+		topics = null;
 	});
 };
 

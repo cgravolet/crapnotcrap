@@ -11,5 +11,10 @@ exports.index = function (req, res){
 exports.search = function (req, res) {
 	var term = req.body.search.replace(/[\\\(\);]+/gi, "").trim();
 	term = term.toLowerCase().replace(/\//g, "_slash_");
-	res.redirect("/search/" + encodeURIComponent(term));
+	
+	if (term.length) {
+		res.redirect("/search/" + encodeURIComponent(term));
+	} else {
+		res.redirect("/all");
+	}
 };
