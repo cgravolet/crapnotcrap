@@ -6,5 +6,7 @@ html(lang='en-us')
 		link(rel='stylesheet', href='/css/style.css')
 body
 	block content
-	script(src='/js/lib/jquery-1.10.1.js')
+	script(src='//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')
+	script().
+		window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')
 	script(src='/js/crapnotcrap.js')
