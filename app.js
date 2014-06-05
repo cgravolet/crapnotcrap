@@ -1,43 +1,53 @@
-var express = require("express");
-var http    = require("http");
-var path    = require("path");
-var routes  = require("./routes");
-var search  = require("./routes/search");
-var app     = express();
+var bodyParser   = require("body-parser");
+var cookieParser = require("cookie-parser");
+var express      = require("express");
+var favicon      = require("static-favicon");
+var logger       = require("morgan");
+var path         = require("path");
+var routes       = require("./routes");
+var app          = express();
 
-// All environments
-app.set("port", process.env.PORT || 3000);
-app.set("views", __dirname + "/views");
+// View engine setup
+app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
 // Middleware
-app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(app.router);
-app.use(require("stylus").middleware(__dirname + "/public"));
+app.use(favicon());
+app.use(logger("dev"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+app.use(cookieParser());
+app.use(require("stylus").middleware(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Development only
-if ("development" == app.get("env")) {
-  app.use(express.errorHandler());
+// Routes
+app.use("/", routes(app));
+
+// Catch 404 and forwarding to error handler
+app.use(function(req, res, next) {
+    var err = new Error("Not Found");
+    err.status = 404;
+    next(err);
+});
+
+// Development error handler, will print stacktrace
+if (app.get("env") === "development") {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render("error", {
+            message: err.message,
+            error: err
+        });
+    });
 }
 
-// Routes
-app.get("/", routes.index);
-app.post("/", routes.search);
-app.get("/all", search.all);
-app.get("/all/:page", search.all);
-app.get("/crap", search.crap);
-app.get("/crap/:page", search.crap);
-app.get("/notcrap", search.notcrap);
-app.get("/notcrap/:page", search.notcrap);
-app.get("/search", search.term);
-app.get("/search/:term", search.term);
-app.get("/search/:term/:page", search.term);
-app.get("/thunderdome", search.thunderdome);
-app.get("/thunderdome/:page", search.thunderdome);
-
-// Start the server
-http.createServer(app).listen(app.get("port"), function(){
-  console.log("Express server listening on port " + app.get("port"));
+// Production error handler, no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render("error", {
+        message: err.message,
+        error: {}
+    });
 });
+
+module.exports = app;

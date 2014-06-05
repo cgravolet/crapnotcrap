@@ -1,6 +1,7 @@
 (function ($) {
 
 	function autoFocusNoResultsForm() {
+
 		if ($(".no-results").length) {
 			$("input[name=search]").focus();
 		}
@@ -8,6 +9,12 @@
 
 	$(function () {
 		autoFocusNoResultsForm();
+
+		if (window.console && window.console.log) {
+			console.log("Hey there, good looking. If you'd like to " +
+					"contribute, visit " +
+					"https://github.com/cgravolet/crapnotcrap");
+		}
 	});
 
 }(jQuery));

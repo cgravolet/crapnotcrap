@@ -1,119 +1,105 @@
-var TopicProvider = require("./../topicprovider").TopicProvider;
-var topicProvider = new TopicProvider();
-var max = 100;
+var Route  = require("./Route");
+var Search = Object.create(Route);
 
-/*
- * GET search results page
+/**
+ * When no search term is provided, redirect to /all
+ *
+ * @param {Object} req
+ * @param {Object} res
  */
-
-exports.all = function (req, res) {
-	var page = getPage(req);
-
-	topicProvider.search("", function (err, topics) {
-		res.render("results", {
-			pagination: getPaginationArray(topics.length, max, page, req),
-			title:  "All Results - Crap / Not Crap",
-			topics: topics.slice(page * max - max, page * max)
-		});
-		topics = null;
-	});
+Search.noTerm = function (req, res) {
+	res.redirect("/all");
 };
 
-exports.crap = function (req, res) {
-	var page = getPage(req);
+/**
+ * Gets results for a search term and sends them to the results view.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Number} (page)
+ */
+Search.results = function (req, res, p) {
+	var isJSON = arguments[3] === true ? true : false;
+	var max    = 100;
+	var page   = !p || isNaN(p) ? 1 : p;
+	var skip   = max * (page - 1);
+	var sort   = {votes: -1};
+	var term   = (req.params.term || "").replace(/_slash_/gi, "/");
+	var topics = this.topicsCollection();
+	var query  = {title: {$regex: newRegexpFrom(term)}};
+	var cursor = topics.find(query).sort(sort).skip(skip).limit(max);
 
-	topicProvider.crap(function (err, topics) {
-		res.render("results", {
-			pagination: getPaginationArray(topics.length, max, page, req),
-			title: "The Crap List - Crap / Not Crap",
-			topics: topics.slice(page * max - max, page * max),
-			url: req.url
-		});
-		topics = null;
-	});
+	cursor.count(function (err, count) {
+		if (err) throw new Error(err);
+
+		cursor.toArray(function(err, items) {
+			if (err) throw new Error(err);
+
+			var topics = this.utils.parseResults(items);
+
+			if (isJSON === true) {
+				res.send(topics);
+				return;
+			}
+
+			res.render("results", {
+				pagination: this.utils.getPaginationArray(count, max, page, req),
+				term:       term,
+				title:      term + " - Crap / Not Crap",
+				topics:     topics
+			});
+		}.bind(this));
+	}.bind(this));
 };
 
-exports.notcrap = function (req, res) {
-	var page = getPage(req);
-
-	topicProvider.notcrap(function (err, topics) {
-		res.render("results", {
-			pagination: getPaginationArray(topics.length, max, page, req),
-			title: "The Not Crap List - Crap / Not Crap",
-			topics: topics.slice(page * max - max, page * max)
-		});
-		topics = null;
-	});
-};
-
-exports.term = function (req, res) {
-	var page = getPage(req);
-	var term = (req.params.term || "").replace(/_slash_/gi, "/");
-
-	if (!term) {
-		res.redirect("/all");
-	}
-
-	topicProvider.search(term, function(err, topics) {
-		res.render("results", {
-			pagination: getPaginationArray(topics.length, max, page, req),
-			term:   term,
-			title:  "Search Results - Crap / Not Crap",
-			topics: topics.slice(page * max - max, page * max)
-		});
-		topics = null;
-	});
-};
-
-exports.thunderdome = function (req, res) {
-	var page = getPage(req);
-
-	topicProvider.thunderdome(function (err, topics) {
-		res.render("results", {
-			pagination: getPaginationArray(topics.length, max, page, req),
-			title: "Thunderdomes - Crap / Not Crap",
-			topics: topics.slice(page * max - max, page * max)
-		});
-		topics = null;
-	});
-};
-
-function getPage(req) {
+/**
+ * Validates the page parameter before passing the request to the term method.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ */
+Search.resultsWithPage = function (req, res) {
 	var page = req.params.page || 1;
 
 	if (typeof page === "string") {
 		page = parseFloat(page.replace(/[^0-9]+/g, "")) || 1;
 	}
+	this.results(req, res, page);
+};
 
-	return page;
-}
+Search.resultsJSON = function (req, res) {
+	var page = req.params.page || 1;
 
-function getPaginationArray(total, max, page, req) {
-	var currentPage, i, pageCount, paginationArray, paginationObj;
-
-	pageCount = Math.ceil(total / max);
-	paginationArray = [];
-
-	for (i = 0; i < pageCount; i += 1) {
-		currentPage = i + 1;
-		paginationObj = {
-			label: currentPage,
-		};
-
-		if (currentPage !== page) {
-			paginationObj.url = req.url.replace(/\/[0-9]*\/?$/, "") + "/" + currentPage;
-		} else {
-			paginationObj.selected = true;
-		}
-
-		if ( (currentPage - page >= -3 && currentPage - page <= 3) ||
-				(page <= 1 && currentPage - page <= 4) ||
-				(currentPage === 1 || currentPage === pageCount) ) {
-			paginationArray.push(paginationObj);
-		} else if (currentPage === 2 || currentPage === pageCount - 1) {
-			paginationArray.push({label: "..."});
-		}
+	if (typeof page === "string") {
+		page = parseFloat(page.replace(/[^0-9]+/g, "")) || 1;
 	}
+	this.results(req, res, page, true);
+};
 
-	return paginationArray;
+/**
+ * Helper function to create a regular expression object based off of a search
+ * term.
+ *
+ * @param {String} term
+ * @returns {RegExp}
+ */
+function newRegexpFrom(term) {
+
+	// Replaces space characters with a catch-all for any spaces
+	term = term.trim().replace(/\s+/g, "\\s*");
+
+	/*
+	 * Adds better support for searching with quotes, for instance
+	 * searching for the band "UT" would be near impossible without
+	 * this.
+	 *
+	 * @TODO this breaks down when searching for multiple quoted
+	 *       keywords
+	 */
+	if (/".+"/.test(term)) {
+		term = term.replace(/"(.*?)"/g, '(^|\\s+|")$1("|\\s+|$)');
+	}
+	return new RegExp(term, "i");
 }
+
+module.exports = Search;

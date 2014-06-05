@@ -8,17 +8,22 @@
   },
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node ./bin/www"
   },
   "author": "Charles Gravolet",
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "express": "3.2.6",
-    "jade": "*",
-    "jsdom": "~0.6.5",
-    "mongodb": "~1.3.10",
-    "request": "~2.21.0",
-    "stylus": "*"
+    "express": "~4.0.0",
+    "static-favicon": "~1.0.0",
+    "morgan": "~1.0.0",
+    "cookie-parser": "~1.0.1",
+    "body-parser": "~1.0.0",
+    "debug": "~0.7.4",
+    "jade": "~1.3.0",
+    "stylus": "0.42.3",
+    "jsdom": "*",
+    "mongodb": "*",
+    "request": "*"
   }
 }

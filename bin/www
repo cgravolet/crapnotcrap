@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+var debug       = require("debug")("my-application");
+var app         = require("../app");
+var MongoClient = require("mongodb").MongoClient;
+
+app.set("port", process.env.PORT || 3000);
+
+MongoClient.connect("mongodb://localhost:27017/crapnotcrap", function (err, db) {
+
+	if (err) {
+		throw new Error(err);
+		return;
+	} else {
+		app.set("db", db);
+	}
+
+	var server = app.listen(app.get("port"), function () {
+	  debug("Express server listening on port " + server.address().port);
+	});
+});
