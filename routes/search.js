@@ -18,10 +18,10 @@ Search.noTerm = function (req, res) {
  * @param {Object} res
  * @param {Number} (page)
  */
-Search.results = function (req, res, p) {
-	var isJSON = arguments[3] === true ? true : false;
+Search.results = function (req, res, next) {
+	var isJSON = arguments[4] === true ? true : false;
 	var max    = 100;
-	var page   = !p || isNaN(p) ? 1 : p;
+	var page   = !arguments[3] || isNaN(arguments[3]) ? 1 : arguments[3];
 	var skip   = max * (page - 1);
 	var sort   = {votes: -1};
 	var term   = (req.params.term || "").replace(/_slash_/gi, "/");
@@ -30,10 +30,10 @@ Search.results = function (req, res, p) {
 	var cursor = topics.find(query).sort(sort).skip(skip).limit(max);
 
 	cursor.count(function (err, count) {
-		if (err) throw new Error(err);
+		if (err) return next(err);
 
 		cursor.toArray(function(err, items) {
-			if (err) throw new Error(err);
+			if (err) return next(err);
 
 			var topics = this.utils.parseResults(items);
 
@@ -58,22 +58,22 @@ Search.results = function (req, res, p) {
  * @param {Object} req
  * @param {Object} res
  */
-Search.resultsWithPage = function (req, res) {
+Search.resultsWithPage = function (req, res, next) {
 	var page = req.params.page || 1;
 
 	if (typeof page === "string") {
 		page = parseFloat(page.replace(/[^0-9]+/g, "")) || 1;
 	}
-	this.results(req, res, page);
+	this.results(req, res, next, page);
 };
 
-Search.resultsJSON = function (req, res) {
+Search.resultsJSON = function (req, res, next) {
 	var page = req.params.page || 1;
 
 	if (typeof page === "string") {
 		page = parseFloat(page.replace(/[^0-9]+/g, "")) || 1;
 	}
-	this.results(req, res, page, true);
+	this.results(req, res, next, page, true);
 };
 
 /**
