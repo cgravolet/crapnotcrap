@@ -26,7 +26,7 @@ function getTopicById(topicid) {
 		if (err) {
 			console.dir(err);
 		} else if (res.statusCode === 200) {
-			jsdom.env(body, ["./public/js/lib/jquery-1.10.1.js"], function (err, window) {
+			jsdom.env(body, ["./../public/js/lib/jquery-1.10.1.js"], function (err, window) {
 				if (err) {
 					console.dir(err);
 				} else {
