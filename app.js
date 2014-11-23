@@ -1,7 +1,6 @@
 var bodyParser   = require("body-parser");
 var cookieParser = require("cookie-parser");
 var express      = require("express");
-var favicon      = require("static-favicon");
 var logger       = require("morgan");
 var path         = require("path");
 var routes       = require("./routes");
@@ -12,7 +11,6 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
 // Middleware
-app.use(favicon());
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
