@@ -3,6 +3,8 @@
 A simple node/mongoDB app that crawls the electrical audio crap/not crap forum
 and provides a front-end for searching the topics by keyword.
 
+http://crapnotcrap.com
+
 ##Dependencies
 
 The crawler and app require node.js and mongoDB to be installed, and mongod
