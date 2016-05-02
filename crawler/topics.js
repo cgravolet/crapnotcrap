@@ -97,15 +97,24 @@ function parseTopic($) {
 	var posts = $(".posts", this).text().replace(/[^0-9]+/g, "");
 	var title = $(".topictitle", this).text();
 	var views = $(".views", this).text().replace(/[^0-9]+/g, "");
-
-	updateTopic({
+    var topic = {
 		replies: parseFloat(posts),
 		title:   title.trim(),
 		topic_last_updated: new Date(),
 		topicid: parseFloat(id),
 		update_required: true,
 		views:   parseFloat(views)
-	});
+	};
+
+    // Try to parse the date of most recent post
+    var lastPostDate    = null;
+    var lastPostDateRE  = /[A-Z]{3}\s[A-Z]{3,}\s[0-9]+,\s[0-9]{4}\s[0-9:]+\s[A-Z]{2}/i;
+    var lastPostDateArr = $(".lastpost", this).text().match(lastPostDateRE);
+    
+    if (lastPostDateArr.length) {
+        topic.last_reply_datetime = new Date(lastPostDateArr[0]);
+    }
+	updateTopic(topic);
 }
 
 /**
@@ -173,3 +182,4 @@ function updateTopic(topic) {
 }
 
 initialize();
+
