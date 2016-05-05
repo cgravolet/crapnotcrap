@@ -3,4 +3,3 @@
 nohup.out
 backup/*
 logs/*
-node_modules/*
