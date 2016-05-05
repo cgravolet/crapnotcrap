@@ -106,6 +106,10 @@ function parseTopic($) {
 		views:   parseFloat(views)
 	};
 
+    if (topic.topicid == 62843) {
+        return;
+    }
+
     // Try to parse the date of most recent post
     var lastPostDate    = null;
     var lastPostDateRE  = /[A-Z]{3}\s[A-Z]{3,}\s[0-9]+,\s[0-9]{4}\s[0-9:]+\s[A-Z]{2}/i;
@@ -114,7 +118,7 @@ function parseTopic($) {
     if (lastPostDateArr.length) {
         topic.last_reply_datetime = new Date(lastPostDateArr[0]);
     }
-	updateTopic(topic);
+    updateTopic(topic);
 }
 
 /**

@@ -8,7 +8,12 @@
   },
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "backup": "mongodump -d crapnotcrap -o database_snapshot",
+    "crawlpolls": "node crawler/polls.js",
+    "crawltopics": "node crawler/topics.js",
+    "crawltopicssingle": "node crawler/topics.js single",
+    "restore": "mongorestore --drop database_snapshot",
+    "start": "./bin/www"
   },
   "author": "Charles Gravolet",
   "license": "MIT",
