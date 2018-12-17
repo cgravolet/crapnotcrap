@@ -1,11 +1,11 @@
-#EA Crap/Not Crap Forum Crawler
+# EA Crap/Not Crap Forum Crawler
 
 A simple node/mongoDB app that crawls the electrical audio crap/not crap forum
 and provides a front-end for searching the topics by keyword.
 
 http://crapnotcrap.com
 
-##Dependencies
+## Dependencies
 
 The crawler and app require node.js and mongoDB to be installed, and mongod
 listening on port 27017 (default). See the mongo documentation for tips on
@@ -13,13 +13,13 @@ installing and running mongoDB.
 
 [http://docs.mongodb.org/manual/installation/](http://docs.mongodb.org/manual/installation/)
 
-##Installation
+## Installation
 
 	$ git clone https://github.com/cgravolet/crapnotcrap.git
 	$ cd crapnotcrap
 	$ npm install
 
-##Restoring the database from backup
+## Restoring the database from backup
 
 A snapshot of the mongo database is available in the `database_snapshot`
 directory. Running the following command from the root directory of the
@@ -28,7 +28,7 @@ provided:
 
 	$ npm run restore
 
-##Starting the server
+## Starting the server
 
 Make sure the mongo database is up and running, then run startup script to start
 the HTTP server:
@@ -41,7 +41,7 @@ run the webserver manually on port 80, that would look something like this:
 
 	$ sudo PORT=80 ./bin/www
 
-##Crawling
+## Crawling
 
 Crawling is currently split into two scripts, one for topics and one for polls.
 Topics should be crawled first, this get's a list of topics from the forums
