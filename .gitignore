@@ -1,5 +1,0 @@
-*.DS_Store
-*.swp
-nohup.out
-backup/*
-logs/*
