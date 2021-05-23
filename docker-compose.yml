@@ -1,12 +1,16 @@
 version: "3.9"
 services:
+    scraper:
+        build: scraper/.
+        volumes:
+            - ./scraper/src:/src
     web:
-        build: .
+        build: web/.
         ports:
             - "5000:5000"
         volumes:
-            - ./src:/src
+            - ./web/src:/src
         environment:
             FLASK_ENV: development
-#    redis:
-#        image: "redis:alpine"
+    redis:
+        image: "redis:alpine"

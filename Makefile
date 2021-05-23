@@ -1,10 +1,10 @@
 default: compose # clean build run
 
 compose:
-	docker-compose up
+	docker compose up
 
 compose-build:
-	docker-compose up --build
+	docker compose up --build
 
 clean:
 	docker rm cnc_web || true
@@ -17,3 +17,9 @@ run:
 
 stop:
 	docker stop cnc_web
+
+scrape:
+	docker compose up scraper
+
+scrape-dev:
+	docker compose run scraper
