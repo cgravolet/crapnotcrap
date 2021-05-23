@@ -1,4 +1,4 @@
-default: clean build run
+default: compose # clean build run
 
 compose:
 	docker-compose up
