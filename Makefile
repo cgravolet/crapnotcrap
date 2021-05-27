@@ -19,7 +19,13 @@ stop:
 	docker stop cnc_web
 
 scrape:
-	docker compose up scraper
+	docker compose up scraper mongo
 
 scrape-dev:
 	docker compose run scraper
+
+mongod:
+	docker compose up mongo
+
+mongoconnect:
+	docker exec -it crapnotcrap_mongo_1 bash

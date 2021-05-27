@@ -12,5 +12,9 @@ services:
             - ./web/src:/src
         environment:
             FLASK_ENV: development
+    mongo:
+        image: "mongo"
+        volumes:
+            - ./mongo/database_snapshot:/database_snapshot
     redis:
         image: "redis:alpine"
