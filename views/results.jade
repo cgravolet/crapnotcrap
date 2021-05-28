@@ -20,7 +20,7 @@ block content
 							span= page.label
 			- each topic in topics
 				h2.topic
-					a(href='http://www.electricalaudio.com/phpBB3/viewtopic.php?f=6&view=viewpoll&t=#{topic.topicid}')= topic.title
+					a(href='http://premierrockforum.com/viewtopic.php?f=6&t=#{topic.topicid}')= topic.title
 				- if (topic.hasOwnProperty("subject"))
 					p.subject= topic.subject
 				ul.polls
