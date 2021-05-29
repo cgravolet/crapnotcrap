@@ -4,6 +4,7 @@ services:
         build: scraper/.
         volumes:
             - ./scraper/src:/src
+            - ./mongo:/mongodata
     web:
         build: web/.
         ports:
@@ -15,6 +16,6 @@ services:
     mongo:
         image: "mongo"
         volumes:
-            - ./mongo/database_snapshot:/database_snapshot
+            - ./mongo:/mongodata
     redis:
         image: "redis:alpine"
