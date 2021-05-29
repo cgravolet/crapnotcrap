@@ -11,4 +11,4 @@ RUN apk add --no-cache gcc musl-dev linux-headers libxslt-dev
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 EXPOSE 5000
-CMD ["python3", "topic-scraper.py"]
+CMD ["python3", "main.py"]
