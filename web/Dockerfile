@@ -5,7 +5,7 @@
 # Run the container:
 # > docker run -p 80:5000 cgravolet/crapnotcrap-web
 #
-FROM python:3.7-alpine
+FROM python
 WORKDIR /src
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0

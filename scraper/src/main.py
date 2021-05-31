@@ -6,9 +6,7 @@ def main():
     # scraper = TopicScraper(url="./viewforum.php?f=28")
     scraper = TopicScraper(forum_id=28, single=True, start=60)
     topics = scraper.scrape()
-    output = scraper.write_to_file(topics)
-    print(output)
-    print(f"{len(topics)} topics retrieved")
+    scraper.write_to_file(topics)
 
 def main_mongo():
     client = MongoClient("mongodb://crapnotcrap_mongo_1:27017")
