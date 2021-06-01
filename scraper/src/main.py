@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 from pymongo import MongoClient
 from scrapers import TopicScraper
+import sys
 
-def main():
-    # scraper = TopicScraper(url="./viewforum.php?f=28")
+def main(args=None):
+    
+    if args is None:
+        args = sys.argv[1:]
     scraper = TopicScraper(forum_id=28, single=True, start=60)
     topics = scraper.scrape()
     scraper.write_to_file(topics)

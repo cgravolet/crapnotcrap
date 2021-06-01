@@ -1,2 +1,3 @@
 **/*.pyc
-scraper/**/output.json
+**/output.json
+.vscode/*
