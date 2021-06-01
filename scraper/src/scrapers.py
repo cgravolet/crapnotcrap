@@ -6,6 +6,7 @@ import json
 import re
 import sys
 from topic import Topic
+from typing import Optional
 import urllib.parse as urlparse
 
 class TopicScraper:
@@ -16,45 +17,47 @@ class TopicScraper:
     # Initialization
 
     def __init__(self, **kwargs):
-        self._forum_id = kwargs['forum_id'] if 'forum_id' in kwargs else 28
+        self._forum_id = int(kwargs['forum_id']) if 'forum_id' in kwargs else 28
         self._single = bool(kwargs['single']) if 'single' in kwargs else False
-        self._start = kwargs['start'] if 'start' in kwargs else 0
+        self._start = int(kwargs['start']) if 'start' in kwargs else 0
         self._start_url = self.forum_url_format.format(self._forum_id, self._start)
 
     # Properties
 
-    def start_url(self, url = None):
+    def start_url(self, url: str = None) -> str:
         if url: self._start_url = url
         return self._start_url
 
     # Private methods
 
-    def __get_replies_from_row(self, row):
+    def __get_replies_from_row(self, row: html.Element) -> int:
         replies_text = next(iter(row.xpath(".//span[@class='topic-replies']/text()")), "0")
-        replies = int(re.search("\d+", replies_text).group())
+        result = re.search("\d+", replies_text)
+        replies = int(result.group()) if result is not None else 0
         return replies
 
-    def __get_views_from_row(self, row):
+    def __get_views_from_row(self, row: html.Element) -> int:
         views_text = next(iter(row.xpath(".//span[@class='topic-views']/text()")), "0")
-        views = int(re.search("\d+", views_text).group())
+        result = re.search("\d+", views_text)
+        views = int(result.group()) if result is not None else 0
         return views
 
-    def __get_date_from_string(self, s):
+    def __get_date_from_string(self, s: Optional[str]) -> Optional[datetime]:
         if s is None: return None
         return datetime.strptime(s, '%Y-%m-%dT%H:%M:%S%z')
 
-    def __get_id_from_url(self, url, key):
+    def __get_id_from_url(self, url: str, key: str) -> Optional[int]:
         url_string = self.base_url + url
-        url = urlparse.urlparse(url_string)
+        result = urlparse.urlparse(url_string)
 
-        if url.query:
-            query_params = urlparse.parse_qs(url.query)
+        if result.query:
+            query_params = urlparse.parse_qs(result.query)
             id_string = next(iter(query_params[key]), None)
             return int(id_string) if id_string is not None else None
 
         return None
 
-    def __parse_details_from_poll(self, poll, topic):
+    def __parse_details_from_poll(self, poll: html.Element, topic: Topic) -> Topic:
         title_element = next(iter(poll.xpath(".//h4[@class='poll-title']")), None)
         topic.subject(title_element.text.strip() if title_element is not None else None)
         topic.votes(int(next(iter(poll.xpath(".//span[@class='poll_total_vote_cnt']/text()")), "0").strip()))
@@ -75,7 +78,7 @@ class TopicScraper:
         topic.polls(polls)
         return topic
 
-    def __parse_topic_from_row(self, row):
+    def __parse_topic_from_row(self, row: html.Element) -> Optional[Topic]:
         title_element = next(iter(row.xpath(".//a[@class='topictitle']")), None)
         replies = self.__get_replies_from_row(row)
         views = self.__get_views_from_row(row)
@@ -84,7 +87,7 @@ class TopicScraper:
             topic_title = title_element.text.strip()
             topic_id = self.__get_id_from_url(title_element.get('href'), 't')
         else:
-            return
+            return None
 
         # Parse items from the description element
         description_element = next(iter(row.xpath(".//div[@class='topic-description']")), None)
@@ -123,8 +126,8 @@ class TopicScraper:
         )
         return topic
 
-    def __scrape_details_for_topics(self, topics):
-        topics_with_details = []
+    def __scrape_details_for_topics(self, topics: list[Topic]) -> list[Topic]:
+        topics_with_details: list[Topic] = []
         topic_count = len(topics)
 
         for i, topic in enumerate(topics):
@@ -140,7 +143,7 @@ class TopicScraper:
 
         return topics_with_details
 
-    def __print_progress(self, topic_index, max_index):
+    def __print_progress(self, topic_index: int, max_index: int) -> None:
         topic_index = topic_index if topic_index is not None else 0
         max_index = max_index if max_index is not None else 10
         percent_size = 25
@@ -151,7 +154,7 @@ class TopicScraper:
 
     # Public methods
 
-    def scrape(self, url = None, topics = None):
+    def scrape(self, url: str = None, topics: list[Topic] = None) -> list[Topic]:
         url = url if url else self._start_url
         topics = topics if topics else []
 
@@ -172,7 +175,7 @@ class TopicScraper:
 
         return self.scrape(next_url, topics) if next_url else topics
 
-    def write_to_file(self, topics, filename = "output.json"):
+    def write_to_file(self, topics: list[Topic], filename: str = "output.json") -> str:
 
         def default_encoder(o):
             if isinstance(o, datetime):

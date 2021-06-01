@@ -1,3 +1,7 @@
 lxml
 requests
 pymongo
+pytest
+mypy
+lxml-stubs
+pymongo-stubs
