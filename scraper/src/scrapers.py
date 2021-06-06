@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 from lxml import html
 from datetime import datetime, timezone
+import argparse
 import requests
 import json
 import re
 import sys
 from topic import Topic
-from typing import Optional
+from typing import Optional, List
 import urllib.parse as urlparse
 
 class TopicScraper:
@@ -126,8 +127,8 @@ class TopicScraper:
         )
         return topic
 
-    def __scrape_details_for_topics(self, topics: list[Topic]) -> list[Topic]:
-        topics_with_details: list[Topic] = []
+    def __scrape_details_for_topics(self, topics: List[Topic]) -> List[Topic]:
+        topics_with_details: List[Topic] = []
         topic_count = len(topics)
 
         for i, topic in enumerate(topics):
@@ -154,7 +155,7 @@ class TopicScraper:
 
     # Public methods
 
-    def scrape(self, url: str = None, topics: list[Topic] = None) -> list[Topic]:
+    def scrape(self, url: str = None, topics: List[Topic] = None) -> List[Topic]:
         url = url if url else self._start_url
         topics = topics if topics else []
 
@@ -175,7 +176,7 @@ class TopicScraper:
 
         return self.scrape(next_url, topics) if next_url else topics
 
-    def write_to_file(self, topics: list[Topic], filename: str = "output.json") -> str:
+    def write_to_file(self, topics: List[Topic], filename: str = "output.json") -> str:
 
         def default_encoder(o):
             if isinstance(o, datetime):
@@ -195,3 +196,16 @@ class TopicScraper:
 
         f.close()
         return jsonStr
+
+def main():
+    parser = argparse.ArgumentParser(description="Scrapes the Premier Rock Forum's Crap/Not Crap Forum")
+    parser.add_argument('--forumid', type=int, dest='forum_id', help='The ID of the forum to scrape', default=28)
+    parser.add_argument('--output', type=str, dest='filename', help='The path to the output file', required=True)
+    parser.add_argument('--single', type=bool, dest='single', help='A Boolean value indicating if only a single page should be scraped', default=False)
+    parser.add_argument('--start', type=int, dest='start', help='An integer representing the page to start scraping', default=0)
+    args = parser.parse_args()
+    scraper = TopicScraper(forum_id=args.forum_id, start=args.start, single=args.single)
+    topics = scraper.scrape()
+    scraper.write_to_file(topics, args.filename)
+
+if __name__ == "__main__": main()
