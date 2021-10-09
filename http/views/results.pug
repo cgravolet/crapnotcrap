@@ -11,20 +11,20 @@ block content
 		- if (topics.length)
 			- if (pagination.length > 1)
 				div.pagination-top
-					- each page in pagination
+					each page in pagination
 						- if (page.url)
 							a(href="#{page.url}")= page.label
 						- else if (page.selected)
 							strong= page.label
 						- else
 							span= page.label
-			- each topic in topics
+			each topic in topics
 				h2.topic
 					a(href='http://premierrockforum.com/viewtopic.php?f=6&t=#{topic.topicid}')= topic.title
 				- if (topic.hasOwnProperty("subject"))
 					p.subject= topic.subject
 				ul.polls
-					- each poll in topic.polls
+					each poll in topic.polls
 						li
 							.label(title=poll.label)
 								- if (poll.leading)
@@ -34,7 +34,7 @@ block content
 							.votes #{poll.votes} votes
 			- if (pagination.length > 1)
 				div.pagination-bottom
-					- each page in pagination
+					each page in pagination
 						- if (page.url)
 							a(href="#{page.url}")= page.label
 						- else if (page.selected)
