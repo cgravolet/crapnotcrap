@@ -2,6 +2,10 @@ version: "3.9"
 services:
     http:
         build: http/.
+        depends_on:
+            - "mongo"
+        ports:
+            - "3000:3000"
     mongo:
         image: "mongo"
         ports:

@@ -5,7 +5,13 @@ var MongoClient = require("mongodb").MongoClient;
 
 app.set("port", process.env.PORT || 3000);
 
-MongoClient.connect("mongodb://localhost:27017/crapnotcrap", function (err, db) {
+if (process.env.CNC_ENV == "docker") {
+	app.set("mongopath", "mongodb://mongo:27017/crapnotcrap");
+} else {
+	app.set("mongopath", "mongodb://localhost:27017/crapnotcrap");
+}
+
+MongoClient.connect(app.get("mongopath"), function (err, db) {
 
 	if (err) {
 		throw new Error(err);
