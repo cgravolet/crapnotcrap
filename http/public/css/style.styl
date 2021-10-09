@@ -1,0 +1,194 @@
+/* Mixins */
+
+border-radius()
+	-webkit-border-radius arguments
+	-moz-border-radius arguments
+	border-radius arguments
+
+box-shadow()
+	-webkit-box-shadow arguments
+	-moz-box-shadow arguments
+	box-shadow arguments
+
+/* Styles */
+
+html, body
+	min-height: 100%;
+	margin: 0
+	padding: 0
+	width: 100%;
+
+body
+	background-color: #f2ecda
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(242, 236, 218)), to(rgb(255, 251, 237)))
+	background-image: -webkit-linear-gradient(top, rgb(242, 236, 218), rgb(255, 251, 237))
+	background-image: -moz-linear-gradient(top, rgb(242, 236, 218), rgb(255, 251, 237))
+	background-image: -o-linear-gradient(top, rgb(242, 236, 218), rgb(255, 251, 237))
+	background-image: -ms-linear-gradient(top, rgb(242, 236, 218), rgb(255, 251, 237))
+	background-image: linear-gradient(top, rgb(242, 236, 218), rgb(255, 251, 237))
+	font: 16px "Lucida Grande", Helvetica, Arial, sans-serif
+
+a
+	color: #A64729
+
+h1.logo
+	background: transparent url(/img/logo-x2.png) no-repeat center center
+	background-size: 311px 50px
+	height: 50px
+	margin: 0
+	text-indent: 100%
+	overflow: hidden
+	white-space: nowrap
+	width: 100%
+
+.search-form
+	background: #D9D1B8
+	border-radius(8px)
+	left: 50%
+	margin: -125px 0 0 -250px
+	padding: 20px
+	position: absolute
+	top: 50%
+	width: 460px
+
+	p
+		margin: 0
+
+	.input-container
+		margin: 20px 0
+
+	input
+		border: 0
+		border-radius(2px)
+		font-size: 16px
+		height: 20px
+		line-height: 20px
+		margin: 0
+		padding: 5px 5px
+		width: 450px
+
+header.search-form
+	border-radius(0)
+	box-shadow(1px 0 3px 0 #333)
+	left: 0
+	margin: 0
+	padding: 15px 0
+	position: fixed
+	top: 0
+	width: 100%
+	z-index: 2
+
+	p
+		text-align: center
+
+.button-container
+	text-align: center
+
+button
+	background-color: #dfa57f;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(223, 165, 127)), to(rgb(208, 124, 97)));
+	background-image: -webkit-linear-gradient(top, rgb(223, 165, 127), rgb(208, 124, 97));
+	background-image: -moz-linear-gradient(top, rgb(223, 165, 127), rgb(208, 124, 97));
+	background-image: -o-linear-gradient(top, rgb(223, 165, 127), rgb(208, 124, 97));
+	background-image: -ms-linear-gradient(top, rgb(223, 165, 127), rgb(208, 124, 97));
+	background-image: linear-gradient(top, rgb(223, 165, 127), rgb(208, 124, 97));
+	border: 1px solid #D07D61;
+	border-radius(2px)
+	color: white
+	cursor: pointer
+	font-size: 16px
+	height: 30px
+	line-height: 27px
+	padding: 0
+	width: 150px
+
+.links
+	bottom: -28px
+	left: 0
+	margin: 0
+	position: absolute
+	text-align: center
+	width: 100%
+
+	a
+		padding: 0 5px
+
+.search-results
+	margin: 90px auto 30px
+	width: 700px
+
+	h2
+		font-size: 18px
+		margin-bottom: 10px
+
+.subject
+	color: #99927A
+	font-size: 14px
+	margin: 0
+
+.polls
+	margin: 5px auto 45px
+	padding: 0
+
+	li
+		display: block
+		line-height: 25px
+		list-style: none
+		position: relative
+
+	.label
+		background: #CCC2A3
+		margin: 0 0 5px
+		overflow: hidden
+		padding: 0
+		width: 600px
+
+		strong
+			background: #AA2245
+			color: white
+			display: block
+			font-size: 14px
+			font-weight: normal
+			line-height: 25px
+			white-space: nowrap
+			width: 100%
+
+		strong:before
+			content: ""
+			display: inline-block
+			width: 5px
+
+		.is-leading
+			background: #F81057
+
+	.votes
+		position: absolute
+		right: 0
+		text-align: right;
+		top: 0
+		white-space: nowrap
+		width: 100px
+
+.pagination-bottom,
+.pagination-top
+	border-bottom: 1px solid #D9D1B8
+	padding-bottom: 15px
+	text-align: right
+
+	a, span, strong
+		padding: 0 3px
+	
+.pagination-bottom
+	border-bottom: 0
+	border-top: 1px solid #D9D1B8
+	padding-bottom: 0
+	padding-top: 15px
+
+.no-results
+	text-align: center
+
+	img
+		box-shadow(1px 1px 5px 0 #666)
+		height: 300px
+		margin-top: 30px
+		width: 400px

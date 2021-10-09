@@ -1,5 +1,9 @@
 version: "3.9"
 services:
+    http:
+        build: http/.
+        volumes:
+            - ./mongo:/mongo
     mongo:
         image: "mongo"
         volumes:
