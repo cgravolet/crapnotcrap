@@ -1,19 +1,21 @@
 package cncscraper
 
-import "time"
+import (
+	"time"
+)
 
 type Topic struct {
-	CrawlDate   time.Time    `json:"crawl_datetime"`
-	CreatedDate time.Time    `json:"topic_datetime"`
-	ForumId     int          `json:"forum_id"`
-	Id          int          `json:"topic_id"`
-	IsArchived  bool         `json:"is_archived"`
-	PollOptions []PollOption `json:"polls"`
-	Replies     int          `json:"replies"`
-	ReplyDate   time.Time    `json:"reply_datetime"`
-	Subject     string       `json:"subject"`
-	Title       string       `json:"title"`
-	User        User         `json:"user"`
-	Views       int          `json:"views"`
-	Votes       int          `json:"votes"`
+	CrawlDate   time.Time    `bson:"crawl_datetime"`
+	CreatedDate time.Time    `bson:"created_datetime"`
+	ForumId     int          `bson:"forum_id"`
+	Id          int          `bson:"topic_id"`
+	IsArchived  bool         `bson:"is_archived"`
+	PollOptions []PollOption `bson:"polls"`
+	Replies     int          `bson:"replies"`
+	ReplyDate   time.Time    `bson:"reply_datetime"`
+	Subject     string       `bson:"subject"`
+	Title       string       `bson:"title"`
+	User        User         `bson:"user"`
+	Views       int          `bson:"views"`
+	Votes       int          `bson:"votes"`
 }

@@ -1,6 +1,6 @@
 package cncscraper
 
 type User struct {
-	Id   int    `json:"user_id"`
-	Name string `json:"user_name"`
+	Id   int    `bson:"user_id"`
+	Name string `bson:"user_name"`
 }

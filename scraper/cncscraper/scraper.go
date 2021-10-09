@@ -1,7 +1,6 @@
 package cncscraper
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
@@ -11,9 +10,10 @@ import (
 	"time"
 
 	"github.com/gocolly/colly"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-func ParseTopic(e *colly.HTMLElement, forumId int) Topic {
+func parseTopic(e *colly.HTMLElement, forumId int) Topic {
 	topic := Topic{
 		CrawlDate:   time.Now(),
 		ForumId:     forumId,
@@ -60,7 +60,7 @@ func ParseTopic(e *colly.HTMLElement, forumId int) Topic {
 	return topic
 }
 
-func ParseTopicPolls(e *colly.HTMLElement, t Topic) Topic {
+func parseTopicPolls(e *colly.HTMLElement, t Topic) Topic {
 	t.CrawlDate = time.Now()
 	t.Subject = e.ChildText("h4.poll-title")
 	t.Votes, _ = strconv.Atoi(e.ChildText(".poll_total_vote_cnt"))
@@ -80,20 +80,7 @@ func ParseTopicPolls(e *colly.HTMLElement, t Topic) Topic {
 	return t
 }
 
-func Scrape(forumId int, start int, end int) []Topic {
-	topics := ScrapeForum(forumId, start, end)
-	topicCount := len(topics)
-
-	// Crawl the individual topics
-	for i, t := range topics {
-		fmt.Printf("\rRequesting topic %d of %d", i+1, topicCount)
-		topics[i] = ScrapeTopic(t)
-	}
-	fmt.Println()
-	return topics
-}
-
-func ScrapeForum(forumId int, start int, end int) []Topic {
+func scrapeForum(forumId int, start int, end int) []Topic {
 	var nextURL string
 	topics := []Topic{}
 
@@ -106,7 +93,7 @@ func ScrapeForum(forumId int, start int, end int) []Topic {
 	})
 
 	c.OnHTML("#topics-wrap li.row", func(e *colly.HTMLElement) {
-		topic := ParseTopic(e, forumId)
+		topic := parseTopic(e, forumId)
 		topics = append(topics, topic)
 	})
 
@@ -127,7 +114,7 @@ func ScrapeForum(forumId int, start int, end int) []Topic {
 				nextStart, err := strconv.Atoi(startVals[0])
 
 				if err == nil && (nextStart <= end || end < 0) {
-					topics = append(topics, ScrapeForum(forumId, nextStart, end)...)
+					topics = append(topics, scrapeForum(forumId, nextStart, end)...)
 				}
 			}
 		}
@@ -135,16 +122,37 @@ func ScrapeForum(forumId int, start int, end int) []Topic {
 	return topics
 }
 
-func ScrapeTopic(topic Topic) Topic {
+func scrapeTopic(topic Topic) Topic {
 	c := colly.NewCollector()
 
 	c.OnHTML("form.topic-poll", func(e *colly.HTMLElement) {
-		topic = ParseTopicPolls(e, topic)
+		topic = parseTopicPolls(e, topic)
 	})
 
 	c.Visit(fmt.Sprintf("http://premierrockforum.com/viewtopic.php?f=%d&t=%d", topic.ForumId, topic.Id))
 
 	return topic
+}
+
+// MARK: - Public methods
+
+// Scrapes the CNC forum matching the given ID and parses topic and poll information.
+//
+// - parameter forumId: The ID of the forum to crawl.
+// - parameter start: The start index.
+// - parameter end: The end index, use -1 to crawl the entire forum.
+// - returns: A collection of CNC topics.
+func Scrape(forumId int, start int, end int) []Topic {
+	topics := scrapeForum(forumId, start, end)
+	topicCount := len(topics)
+
+	// Crawl the individual topics
+	for i, t := range topics {
+		fmt.Printf("\rRequesting topic %d of %d", i+1, topicCount)
+		topics[i] = scrapeTopic(t)
+	}
+	fmt.Println()
+	return topics
 }
 
 func WriteToFile(filename string, topics []Topic) {
@@ -156,10 +164,10 @@ func WriteToFile(filename string, topics []Topic) {
 	}
 
 	for _, topic := range topics {
-		jsondata, err := json.Marshal(topic)
+		bsondata, err := bson.MarshalExtJSON(topic, false, false)
 
 		if err == nil {
-			fmt.Fprintf(file, "%s\n", string(jsondata))
+			fmt.Fprintf(file, "%s\n", string(bsondata))
 		}
 	}
 	file.Close()
