@@ -22,7 +22,7 @@ var Route = {
 
 		/**
 		 * Temporary solution for fixing an issue that causes HTML entities to be
-		 * escaped when passed to the jade template
+		 * escaped when passed to the pug template
 		 *
 		 * @param {String} title
 		 * @private
@@ -34,12 +34,11 @@ var Route = {
 		},
 
 		getPaginationArray: function (total, max, page, req) {
-			var currentPage, i, pageCount, paginationArray, paginationObj;
+			let currentPage, paginationObj;
+			let pageCount = Math.ceil(total / max);
+			let paginationArray = [];
 
-			pageCount = Math.ceil(total / max);
-			paginationArray = [];
-
-			for (i = 0; i < pageCount; i += 1) {
+			for (let i = 0; i < pageCount; i += 1) {
 				currentPage = i + 1;
 				paginationObj = {
 					label: currentPage,
@@ -73,23 +72,26 @@ var Route = {
 		 * @private
 		 */
 		parseResults: function (results) {
-			results.forEach(function (item) {
+			results.forEach(function (topic) {
+				const isArchived = topic.is_archived === false ? false : true;
+				const forumId = isArchived ? 6 : 28;
+				topic.url = "http://premierrockforum.com/viewtopic.php?f=" + forumId + "&t=" + topic.topicid;
 
-				if (item.polls && item.polls.length) {
-					var topVotes = item.polls[0].votes;
+				if (topic.polls && topic.polls.length) {
+					let topVotes = topic.polls[0].votes;
 
-					if (item.polls.length > 1 && topVotes > item.polls[1].votes) {
-						item.polls[0].leading = true;
+					if (topic.polls.length > 1 && topVotes > topic.polls[1].votes) {
+						topic.polls[0].leading = true;
 					}
 
-					item.polls.forEach(function (poll) {
-						poll.percentWidth = Math.round(poll.votes / topVotes * 100);
+					topic.polls.forEach(function (poll) {
+						poll.percentWidth = topVotes > 0 ? Math.round(poll.votes / topVotes * 100) : 0;
 						poll.label = this.cleanseTitle(poll.label);
 					}.bind(this));
 				} else {
-					item.polls = [
-						{label: "Crap", votes: 0},
-						{label: "Not Crap", votes: 0},
+					topic.polls = [
+						{label: "Crap", votes: 0, percentWidth: 0},
+						{label: "Not Crap", votes: 0, percentWidth: 0},
 					];
 				}
 			}.bind(this));
