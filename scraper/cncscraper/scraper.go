@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"time"
 
@@ -74,6 +75,9 @@ func parseTopicPolls(e *colly.HTMLElement, t Topic) Topic {
 			Votes: votes,
 		}
 		options = append(options, option)
+	})
+	sort.SliceStable(options, func(i, j int) bool {
+		return options[i].Votes > options[j].Votes
 	})
 	t.PollOptions = options
 
