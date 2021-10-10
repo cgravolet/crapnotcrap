@@ -19,19 +19,20 @@ block content
 						- else
 							span= page.label
 			each topic in topics
-				h2.topic
-					a(href=topic.url)= topic.title
-				- if (topic.hasOwnProperty("subject"))
-					p.subject= topic.subject
-				ul.polls
-					each poll in topic.polls
-						li
-							.label(title=poll.label)
-								- if (poll.leading)
-									strong.is-leading(style=`width:${poll.percentWidth}%`)= poll.label
-								- else
-									strong(style=`width:${poll.percentWidth}%`)= poll.label
-							.votes #{poll.votes} votes
+				article(class=topic.is_archived ? "archived" : "")
+					h2.topic
+						a(href=topic.url)= topic.title
+					- if (topic.hasOwnProperty("subject"))
+						p.subject= topic.subject
+					ul.polls
+						each poll in topic.polls
+							li
+								.label(title=poll.label)
+									- if (poll.leading)
+										strong.is-leading(style=`width:${poll.percentWidth}%`)= poll.label
+									- else
+										strong(style=`width:${poll.percentWidth}%`)= poll.label
+								.votes #{poll.votes} votes
 			- if (pagination.length > 1)
 				div.pagination-bottom
 					each page in pagination

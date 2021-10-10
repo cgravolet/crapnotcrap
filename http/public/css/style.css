@@ -168,6 +168,12 @@ button {
   white-space: nowrap;
   width: 100px;
 }
+.archived .polls .label strong {
+  background: #b3a680;
+}
+.archived .polls .label .is-leading {
+  background: #928458;
+}
 .pagination-bottom,
 .pagination-top {
   border-bottom: 1px solid #d9d1b8;
