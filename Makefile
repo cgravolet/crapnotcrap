@@ -17,3 +17,9 @@ mongod:
 
 mongoconnect:
 	docker exec -it crapnotcrap_mongo_1 bash
+
+mongoexport:
+	mongoexport --db=crapnotcrap --collection=topics --out=mongo/export/topics.json
+
+mongodump:
+	mongodump --db=crapnotcrap --out=mongo/dump
