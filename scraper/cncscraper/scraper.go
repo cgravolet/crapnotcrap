@@ -30,8 +30,8 @@ func parseTopic(e *colly.HTMLElement, forumId int) Topic {
 
 	if err == nil {
 		q, _ := url.ParseQuery(t.RawQuery)
-		topicid, _ := strconv.Atoi(q["t"][0])
-		topic.Id = topicid
+		topicId, _ := strconv.Atoi(q["t"][0])
+		topic.Id = topicId
 	}
 
 	// Parse the User ID

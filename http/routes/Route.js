@@ -73,9 +73,7 @@ var Route = {
 		 */
 		parseResults: function (results) {
 			results.forEach(function (topic) {
-				const isArchived = topic.is_archived === false ? false : true;
-				const forumId = isArchived ? 6 : 28;
-				topic.url = "http://premierrockforum.com/viewtopic.php?f=" + forumId + "&t=" + topic.topicid;
+				topic.url = "http://premierrockforum.com/viewtopic.php?f=" + topic.forum_id + "&t=" + topic.topic_id;
 
 				if (topic.polls && topic.polls.length) {
 					let topVotes = topic.polls[0].votes;
