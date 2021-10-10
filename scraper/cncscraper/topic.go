@@ -6,7 +6,7 @@ import (
 
 type Topic struct {
 	CrawlDate   time.Time    `bson:"crawl_datetime"`
-	CreatedDate time.Time    `bson:"created_datetime"`
+	CreatedDate time.Time    `bson:"topic_datetime"`
 	ForumId     int          `bson:"forum_id"`
 	Id          int          `bson:"topic_id"`
 	IsArchived  bool         `bson:"is_archived"`
