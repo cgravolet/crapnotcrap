@@ -8,7 +8,8 @@ var Home  = Object.create(Route);
  * @param {Object} res
  */
 Home.get = function (req, res) {
-	res.render("index", {title: "Crap / Not Crap"});
+	//res.render("index", {title: "Crap / Not Crap"});
+	res.redirect("/recent");
 };
 
 /**
