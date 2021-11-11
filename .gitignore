@@ -1,5 +1,6 @@
 *.DS_Store
-*.swp
-nohup.out
-backup/*
-logs/*
+**/*.pyc
+**/output.json
+.vscode/*
+node_modules
+logs

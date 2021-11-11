@@ -1,6 +1,0 @@
-<IfModule mod_rewrite.c>
-  RewriteCond %{HTTP_REFERER} ^http://.*semalt\.com [NC,OR]
-  RewriteCond %{HTTP_REFERER} ^http://.*kambasoft\.com [NC,OR]
-  RewriteCond %{HTTP_REFERER} ^http://.*savetubevideo\.com [NC]
-  RewriteRule (.*) http://www.semalt.com [R=403,L]
-</IfModule>
