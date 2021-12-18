@@ -13,6 +13,7 @@ class TopicCell extends StatelessWidget {
         ?.map((e) => e.votes)
         .reduce((value, element) => element > value ? element : value);
     return Card(
+      color: Theme.of(context).cardColor,
       elevation: 2.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),

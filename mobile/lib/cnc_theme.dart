@@ -69,8 +69,8 @@ class CNCTheme {
         ),
       ),
       appBarTheme: const AppBarTheme(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.black,
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         foregroundColor: Colors.white,
@@ -80,6 +80,11 @@ class CNCTheme {
         selectedItemColor: Colors.green,
       ),
       textTheme: lightTextTheme,
+      backgroundColor: const Color(0xFFF3E3AB),
+      cardColor: Colors.white,
+      disabledColor: const Color(0xFFD1ADAD),
+      highlightColor: const Color(0xFFD32F2F),
+      selectedRowColor: const Color(0xFFD32F2F),
     );
   }
 

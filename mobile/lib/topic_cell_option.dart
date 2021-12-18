@@ -17,8 +17,8 @@ class TopicCellOption extends StatelessWidget {
     final fillPercent = votes / totalVotes;
     return Container(
       decoration: _TopicPollDecoration(
-        backgroundColor: Colors.grey,
-        foregroundColor: Colors.black,
+        backgroundColor: Theme.of(context).disabledColor,
+        foregroundColor: Theme.of(context).selectedRowColor,
         fillPercent: fillPercent,
       ),
       padding: const EdgeInsets.all(8.0),
@@ -38,11 +38,13 @@ class _TopicPollDecoration extends Decoration {
     required this.backgroundColor,
     required this.foregroundColor,
     this.fillPercent = 1.0,
+    this.isLeading = false,
   });
 
   final Color backgroundColor;
   final Color foregroundColor;
   final double fillPercent;
+  final bool isLeading;
 
   @override
   BoxPainter createBoxPainter([VoidCallback? onChanged]) {

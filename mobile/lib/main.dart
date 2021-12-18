@@ -13,7 +13,7 @@ class CrapNotCrapApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const title = 'Crap Not Crap';
-    final theme = CNCTheme.dark();
+    final theme = CNCTheme.light();
     return MaterialApp(
       title: title,
       theme: theme,
@@ -21,9 +21,11 @@ class CrapNotCrapApp extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             title,
-            style: theme.textTheme.headline6,
+            style: theme.textTheme.headline6
+                ?.copyWith(color: theme.appBarTheme.foregroundColor),
           ),
         ),
+        backgroundColor: theme.backgroundColor,
         body: SafeArea(
           child: TopicList(topics: Topic.mock),
         ),
